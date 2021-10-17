@@ -1,0 +1,97 @@
+﻿@page
+@model RazorPagesUI.Pages.All_ItemsModel
+@{
+}
+
+
+
+
+<h4 class="pb-3">My Items (@Model.UserName)</h4>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">LAWSON#</th>
+            <th scope="col">MFR#</th>
+            <th scope="col">DESCRIPTION</th>
+            <th scope="col">STOCK STATUS</th>
+            <th scope="col">RELEASE DATE</th>
+            <th scope="col">STATUS</th>
+
+        </tr>
+    </thead>
+        <tbody>
+      
+            @{ foreach (var item in Model.ItemList)
+                {
+                    string lawson = item.Item;
+                    string mfr = item.MfrNum;
+                    string desc = item.Description;
+                    string status = item.StockStatus;
+                    string releaseDate = item.ReleaseDate;
+                    string resolved = item.Resolved;
+                    if (string.IsNullOrWhiteSpace(item.Resolved))
+                    {
+                        resolved = "Open";
+                    }
+
+
+                <form method="post" asp-page-handler="SelectItem" asp-route-ItemId="@lawson" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState"  asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                    <tr>
+                        <td>
+
+                            <button type="submit" class="btn btn-default">
+                                @lawson
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @mfr
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @desc
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @status
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @releaseDate
+                            </button>
+                        </td>
+                        @{ if (item.Resolved == "Resolved")
+                            {
+                                <td>
+                                    <button type="submit" class="btn btn-default text-success">
+                                        @resolved
+                                    </button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <button type="submit" class="btn btn-default text-danger">
+                                        @resolved
+                                    </button>
+                                </td>
+                            }
+                        }
+                        </tr>
+
+                </form>
+                    }
+                }
+
+        </tbody>
+
+</table>
+
+                      
+
+

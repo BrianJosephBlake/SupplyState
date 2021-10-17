@@ -1,0 +1,437 @@
+﻿@page
+@model RazorPagesUI.Pages.BackorderReadoutModel
+@{
+}
+<div class="container">
+
+    <div class="row align-items-center">
+        <div class="col-md-5 align-self-center">
+            <form method="post" asp-page-handler="Search" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                <div class="row">
+                    <h1 class="text-center">@Model.SiteName</h1>
+                </div>
+                <div class="row">
+                    <div class="input-group mb-3">
+
+                        <input type="text" asp-for="@Model.SearchItem" aria-label="Search Lawson#" placeholder="Search Lawson#" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4"></div>
+        <div class="col-md-3">
+            <div class="list-group">
+                @{
+                    if (Model.DisplayState == 0)
+                    {
+                        <form method="post" asp-page-handler="DisplayAll" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-dark list-group-item-action" type="submit">
+                                ALL
+                                <span class="badge badge-primary badge-secondary">@Model.AllCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayOpen" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                OPEN
+                                <span class="badge badge-primary badge-danger">@Model.OpenCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayResolved" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                RESOLVED
+                                <span class="badge badge-primary badge-secondary">@Model.ResolvedCount</span>
+                            </button>
+                        </form>
+                    }
+                    else if (Model.DisplayState == 1)
+                    {
+                        <form method="post" asp-page-handler="DisplayAll" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                ALL
+                                <span class="badge badge-primary badge-secondary">@Model.AllCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayOpen" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-dark list-group-item-action" type="submit">
+                                OPEN
+                                <span class="badge badge-primary badge-danger">@Model.OpenCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayResolved" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                RESOLVED
+                                <span class="badge badge-primary badge-secondary">@Model.ResolvedCount</span>
+                            </button>
+                        </form>
+                    }
+                    else if (Model.DisplayState == 2)
+                    {
+                        <form method="post" asp-page-handler="DisplayAll" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                ALL
+                                <span class="badge badge-primary badge-secondary">@Model.AllCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayOpen" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-action" type="submit">
+                                OPEN
+                                <span class="badge badge-primary badge-danger">@Model.OpenCount</span>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DisplayResolved" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                            <button href="#" class="list-group-item list-group-item-dark list-group-item-action" type="submit">
+                                RESOLVED
+                                <span class="badge badge-primary badge-secondary">@Model.ResolvedCount</span>
+                            </button>
+                        </form>}
+
+                }
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<hr class="my-4">
+<div class="row">
+    
+        <form method="post" asp-page-handler="ChangeResolvedState" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState=@Model.DetailDisplayState asp-route-HasAccess="@Model.HasAccess">
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    @{
+                        if (@Model.ResolvedOrOpen == "OPEN")
+                        {
+                            <button type="submit" class="btn btn-outline-secondary text-danger mb-3">
+                                @Model.ResolvedOrOpen
+                            </button>
+                        }
+                        else if (Model.ResolvedOrOpen == "RESOLVED")
+                        {
+                            <button type="submit" class="btn btn-outline-secondary text-success mb-3">
+                                @Model.ResolvedOrOpen
+                            </button>
+                        }
+                        else
+                        {
+                            <h4 class="text-warning mb-3">
+                                @Model.ResolvedOrOpen
+                            </h4>
+                        }
+                    }
+                </div>
+            </div>
+        </form>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>LAWSON#</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.IC211.Item_Number</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>DESCRIPTION</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.IC211.Description</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>MFR#</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.IC211.PIV_VEN_ITEM</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>STOCKOUT DATE</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.StockOutDate</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>RELEASE DATE</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.ReleaseDate</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>GAP DAYS</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.GapDays</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>REASON CODE</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.ReasonCode</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>STOCK STATUS</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.StockStatus</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <p>SOURCE</p>
+                    </div>
+                    <div class="col-md-7">
+                        <a>@Model.BackOrderDisplay.Source</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        @{
+            if (Model.DetailDisplayState == 0)
+            {
+                <div class="row">
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-dark">
+                            NOTES
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="1" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            SUBS
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="2" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            LOCATIONS
+                        </button>
+                    </form>
+                </div>
+            }
+            else if (Model.DetailDisplayState == 1)
+            {
+                <div class="row">
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            NOTES
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="1" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-dark">
+                            SUBS
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="2" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            LOCATIONS
+                        </button>
+                    </form>
+                </div>
+            }
+            else if (Model.DetailDisplayState == 2)
+            {
+                <div class="row">
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            NOTES
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="1" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            SUBS
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="2" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-dark">
+                            LOCATIONS
+                        </button>
+                    </form>
+                </div>
+            }
+        }
+
+        <div class="row">
+
+
+            @{
+
+                if (Model.DetailDisplayState == 0)
+                {
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">DATE</th>
+                                        <th scope="col">NOTES</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{if (!string.IsNullOrWhiteSpace(Model.NotesList[0].ITEM))
+
+
+                                        {
+                                            foreach (var note in Model.DisplayNotesList)
+
+
+                                            {
+                                                int captionLength;
+                                                string caption;
+
+                                                captionLength = @Model.GetCaptionLength(note.NOTE);
+                                                caption = note.NOTE.Substring(0, captionLength);
+
+                                                <form method="post" asp-page-handler="GetNote" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@note.Id" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess">
+                                                    <tr>
+                                                        <td>
+
+                                                            <button type="submit" class="btn btn-default">
+                                                                @note.DATE_CREATED
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button type="submit" class="btn btn-default">
+                                                                @caption...
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </form>
+
+
+                                            }
+                                        }
+                                    }
+                                    <tr></tr>
+                                </tbody>
+                            </table>
+
+                                        }
+                                        else if (Model.DetailDisplayState == 1)
+                                        {
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">LAWSON#</th>
+                                <th scope="col">MFR#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @{
+                                foreach (var sub in Model.SubsList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @sub.Sub_Lawson
+                                        </td>
+                                        <td>
+                                            @sub.Sub_Mfr
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            <tr></tr>
+                        </tbody>
+                    </table>
+
+                                }
+                                else if (Model.DetailDisplayState == 2)
+                                {
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">LOCATIONS</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @{
+                                foreach (var location in Model.LocationsList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @location.Location_Code
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            <tr></tr>
+                        </tbody>
+                    </table>
+
+                                }
+                                else if (Model.DetailDisplayState == 3)
+                                {
+                                    <form method="post" asp-page-handler="AddNote" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess">
+                                        <div class="form-group">
+                                            <label for="newNoteInput">NEW NOTE</label>
+                                            <textarea class="form-control rounded-0" id="newNoteInput" rows="10" asp-for="@Model.NewNote"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-secondary">ADD NOTE</button>
+                                    </form>
+
+                                }
+
+            }
+
+        </div>
+        
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+
+            <form method="post" asp-page-handler="Previous" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                <button type="submit" class="btn btn-outline-secondary">PREV</button>
+            </form>
+            <form method="post" asp-page-handler="Next" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess">
+                <button type="submit" class="btn btn-outline-secondary">NEXT</button>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="row">
+            @{
+                if (Model.DetailDisplayState == 0)
+                {
+                    <form method="post" asp-page-handler="DetailChange" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="3" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">NEW NOTE</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="AllNotes" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess">
+                        <button type="submit" class="btn btn-outline-secondary">ALL NOTES</button>
+                    </form>
+                }
+
+            }
+        </div>
+
+    </div>
+</div>
