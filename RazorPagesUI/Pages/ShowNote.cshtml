@@ -2,3 +2,60 @@
 @model RazorPagesUI.Pages.ShowNoteModel
 @{
 }
+
+
+
+<div class="row pb-3">
+    <form method="post" asp-page-handler="Back" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+        <button class="btn btn-outline-secondary">
+            BACK
+        </button>
+    </form>
+</div>
+<div class="row">
+    <h4>Item</h4>
+</div>
+<div class="row">
+    <p>@Model.ItemId</p>
+</div>
+<div class="row">
+    <h4>Entered On</h4>
+</div>
+@{
+
+    string dateTrimmed = Model.Note.DATE_CREATED.Remove(11, 8);
+    <div class="row">
+        <p>@dateTrimmed</p>
+    </div>
+
+}
+
+<div class="row">
+    <h4>By User</h4>
+</div>
+<div class="row">
+    <p>@Model.GetUserName(Model.Note.UserId)</p>
+</div>
+<div class="row">
+    <h4>From Site</h4>
+</div>
+<div class="row">
+    <p>@Model.Note.Site</p>
+</div>
+<div class="row pt-3">
+    <form method="post" asp-page-handler="Previous" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState">
+        <button class="btn btn-outline-secondary">
+            PREV
+        </button>
+    </form>
+    <form method="post" asp-page-handler="Next" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState">
+        <button class="btn btn-outline-secondary">
+            NEXT
+        </button>
+    </form>
+</div>
+<hr class="pb-4">
+<div class="row">
+    <p>@Model.Note.NOTE</p>
+</div>
+

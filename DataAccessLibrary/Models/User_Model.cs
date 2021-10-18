@@ -1,10 +1,21 @@
 ﻿using System;
 namespace DataAccessLibrary.Models
 {
-    public class ser_Model
+    public class User_Model
     {
-        public ser_Model()
+        public User_Model()
         {
         }
+
+        public int Id { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+        public string AccessPermissions { get; set; }
+
+        public int IsMonitored { get; set; }
+
     }
 }

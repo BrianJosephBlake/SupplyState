@@ -52,6 +52,10 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public bool UserHasItems { get; set; }
 
+        [BindProperty (SupportsGet = true)]
+        public int ViewLayer { get; set; }
+        //View Layers: 0 = Site/Scope, 1 = Site, 2 = MBO, 3 = Global
+
         [BindProperty]
         public List<string> AllSitesList { get; set; }
 
@@ -59,37 +63,51 @@ namespace RazorPagesUI.Pages
 
         public void OnGet()
         {
-
-
             if (HasAccess && !string.IsNullOrWhiteSpace(Sql.GetSiteByUser(UserId)))
             { UserHasItems = true; }
 
-            //Console.WriteLine(FromMyItems);
-
-            Site = Sql.TranslateNameToSite(SiteName);
-
             AllSitesList = Sql.GetAllSites();
 
-            if (string.IsNullOrWhiteSpace(ItemId))
+            Site = Sql.TranslateNameToSite(SiteName);
+            string scope = Sql.GetUserScope(UserId);
+            string mbo = Sql.GetMBOByUserId(UserId);
+
+       
+
+            switch (ViewLayer)
             {
-                int masterUserId = Sql.GetMasterUserIdBySite(Site)
-;               ItemId = Sql.Get_First_IC211_ByUserDisplayState(masterUserId,0).Item_Number;
+                case 0:
+                    NotesList = Sql.GetNotesBySiteScope(ItemId, Site, scope);
+                    Sql.OutputToLog("Used Case 0");
+                    break;
+
+                case 1:
+                    NotesList = Sql.GetNotesBySite(ItemId, Site);
+                    Sql.OutputToLog("Used Case 1");
+                    break;
+
+                case 2:
+                    NotesList = Sql.GetNotesByMBO(ItemId, mbo);
+                    Sql.OutputToLog("Used Case 2");
+                    break;
+
+                case 3:
+                    NotesList = Sql.GetNotesByItem(ItemId);
+                    Sql.OutputToLog("Used Case 3");
+                    break;
+
+             
             }
 
-            NotesList = Sql.GetNotesByItem(ItemId);
 
-            if (NotesList.Count > 0)
-            {
+            
 
-            }
+            //NotesList = Sql.GetNotesByItem(ItemId);
+
 
             IC211 = new IC211_Model();
 
             IC211 = Sql.Get_IC211_ByItemSite(ItemId, Site);
-            
-              
-
-
         }
 
         public IActionResult OnPostGetNote()
@@ -109,7 +127,11 @@ namespace RazorPagesUI.Pages
             return captionLength;
         }
 
+        public IActionResult OnPostViewLayerChange()
+        {
+            return RedirectToPage("/AllNotes", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems, ViewLayer = ViewLayer });
 
+        }
 
         public IActionResult OnPostBack()
         {

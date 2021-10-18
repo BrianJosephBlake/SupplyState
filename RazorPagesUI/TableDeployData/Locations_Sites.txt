@@ -1,0 +1,3 @@
+﻿Id,int,PRIMARY KEY IDENTITY,NOT NULL
+Location,[nvarchar](50),,NOT NULL
+SITE,[nvarchar](50),,NOT NULL

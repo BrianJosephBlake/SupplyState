@@ -10,7 +10,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class ShowNote_Item_LookupModel : PageModel
+    public class ShowNote_Critical_ItemsModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -85,11 +85,11 @@ namespace RazorPagesUI.Pages
             
             if(IsFromItemLookup)
             {
-                return RedirectToPage("/Item_Lookup_Readout", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+                return RedirectToPage("/AllCriticalReadout", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
             }
             else
             {
-                return RedirectToPage("/ItemLookup_AllNotes", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+                return RedirectToPage("/Critical_Items_AllNotesModel", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
             }
             
             
@@ -106,7 +106,7 @@ namespace RazorPagesUI.Pages
             GetNextNote(notesList, ViewNoteId);
 
 
-            return RedirectToPage("/ShowNote_Item_Lookup", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = Note.Id, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/ShowNote_Critical_Items", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = Note.Id, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
         }
 
         public IActionResult OnPostPrevious()
@@ -118,7 +118,7 @@ namespace RazorPagesUI.Pages
             GetPreviousNote(notesList, ViewNoteId);
 
 
-            return RedirectToPage("/ShowNote_Item_Lookup", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = Note.Id, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/ShowNote_Critical_Items", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = Note.Id, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
         }
 
 

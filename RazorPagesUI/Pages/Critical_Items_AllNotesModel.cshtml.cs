@@ -12,7 +12,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class ItemLookup_AllNotesModel : PageModel
+    public class Critical_Items_AllNotesModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -97,7 +97,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostGetNote()
         {
-            return RedirectToPage("/ShowNote_Item_Lookup", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/ShowNote_Critical_Items", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
         }
 
         public int GetCaptionLength(string Note)
@@ -118,7 +118,7 @@ namespace RazorPagesUI.Pages
         {
             Console.WriteLine(SiteName);
 
-            return RedirectToPage("/Item_Lookup_Readout", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("AllCriticalReadout", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             
                 
         }

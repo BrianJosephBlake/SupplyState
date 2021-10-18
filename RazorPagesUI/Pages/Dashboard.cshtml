@@ -1,7 +1,80 @@
 ﻿@page
-@model RazorPagesUI.Pages.STFModel
+@model RazorPagesUI.Pages.DashboardModel
 @{
 }
+
+
 <div class="jumbotron">
-    @Model.SiteName
+    <div class="row align-items-center">
+
+        @{
+            foreach (var site in Model.AllSitesList)
+            {
+
+                string siteName = Model.GetSiteName(site);
+
+                List<string> scopes = new List<string>();
+                scopes = Model.GetScopesBySite(site);
+
+                if(scopes.Count > 1)
+                {
+                    scopes.Add("ALL");
+                }
+                else
+                {
+                    scopes.Clear();
+                    scopes.Add("ALL");
+                }
+                
+                scopes.Sort();
+
+                <div class="col-6">
+                    <div class="card mb-4 text-white rounded mx-auto" style="width: 20rem; background-color: #087DC4">
+                                <div class="card-body text-center align-middle">
+                                    <h4 class="card-title text-center">@siteName</h4>
+
+                                    @foreach (var scope in scopes)
+                                    {
+                                        int allByScope = Model.GetAllCountByScope(site, scope);
+                                        int resolvedByScope = Model.GetResolvedCountByScope(site, scope);
+                                        int completion = 0;
+
+                                        if (allByScope > 0)
+                                        {
+                                            completion = ((resolvedByScope * 100) / (allByScope));
+
+                                        }
+
+
+                                @if (scope == "ALL")
+                                {
+                                <button href="#" class="list-group-item list-group-item-dark list-group-item-action mx-auto" type="submit">
+                                    @scope
+                                    <span class="badge badge-primary badge-secondary">@completion%</span>
+                                </button> }
+                                                    else
+                                                    {
+                                <button href="#" class="list-group-item list-group-item-action mx-auto" type="submit">
+                                    @scope
+                                    <span class="badge badge-primary badge-secondary">@completion%</span>
+                                </button>}}
+
+                                    <!--
+                        <form method="post" asp-page-Handler="GoToSite" asp-route-SiteName="@siteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">
+                            <button type="submit" class="btn btn-outline-light mt-3">VIEW ITEMS</button>
+                        </form>
+                                        -->
+
+                                </div>
+                    </div>
+                </div>
+            }
+
+        }
+    </div>
 </div>
+<!--
+ <form method="post" asp-page-handler="DrillDown" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">
+    <button type="submit" class="btn btn-outline-secondary">DRILL DOWN</button>
+ </form>
+-->

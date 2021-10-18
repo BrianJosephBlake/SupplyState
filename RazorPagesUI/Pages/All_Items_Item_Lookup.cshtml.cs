@@ -12,7 +12,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class All_ItemsModel : PageModel
+    public class All_Items_Item_LookupModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -21,7 +21,7 @@ namespace RazorPagesUI.Pages
         public string ItemId { get; set; }
 
         [BindProperty]
-        public List<ItemList_Model> ItemList { get; set; }
+        public List<IC211_Model> ItemList { get; set; }
 
         public string Site { get; set; }
 
@@ -76,7 +76,7 @@ namespace RazorPagesUI.Pages
 
         public void OnGet()
         {
-
+            Console.WriteLine("Item Lookup: " + SearchKey);
 
             if (HasAccess && !string.IsNullOrWhiteSpace(Sql.GetSiteByUser(UserId)))
             { UserHasItems = true; }
@@ -91,34 +91,26 @@ namespace RazorPagesUI.Pages
 
             
 
-            if(IsSmartSearch)
+            if(string.IsNullOrWhiteSpace(SearchKey) || SearchKey == "")
             {
-                ItemList = Sql.SmartSearch_SiteTable(SearchKey, UserId);
+                ItemList = new List<IC211_Model>();
+                ItemList.Add(Sql.GetNullIC211());    
             }
             else
             {
-                ItemList = Sql.GetAllItemsByUserFromSiteTable(UserId);
+                ItemList = Sql.SmartSearch_AllItems(SearchKey);
             }
 
-            AllCount = Sql.GetAllCountbyUserFromSiteTable(UserId);
-            ResolvedCount = Sql.GetResolvedCountByUserFromItemScopeResolved(UserId);
-            OpenCount = AllCount - ResolvedCount;
-            
         }
 
         public IActionResult OnPostSelectItem()
         {
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/Item_Lookup_Readout", new { SearchKey = SearchKey, SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId }); ;
         }
 
         public IActionResult OnPostSearch()
         {
-            return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
-        }
-
-        public IActionResult OnPostViewNotesHistory()
-        {
-            return RedirectToPage("/Notes_History", new { SiteName = SiteName, ItemId = SearchKey, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/All_Items_Item_Lookup", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
         }
 
         public string GetSiteName(string site)
@@ -126,35 +118,77 @@ namespace RazorPagesUI.Pages
             return Sql.TranslateSiteToName(site);
         }
 
-        public IActionResult OnPostDisplayAll()
+        public string HasNotes(string itemID)
         {
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-        }
+            string output = "";
 
-        public IActionResult OnPostDisplayOpen()
-        {
-            int allCount = Sql.GetAllCountbyUserFromSiteTable(UserId);
-            int resolvedCount = Sql.GetResolvedCountByUserFromItemScopeResolved(UserId);
-
-            if (allCount <= resolvedCount)
+            if (Sql.ItemHasNotes(itemID))
             {
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+                int noteCount = Sql.ItemNoteCount(itemID);
+
+                output = noteCount + " NOTE";
+
+                if (noteCount > 1)
+                {
+                    output += "S";
+                }
+
             }
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return output;
         }
 
-        public IActionResult OnPostDisplayResolved()
+        public string IsCriticalStatus(string itemId)
         {
-
-            int resolvedCount = Sql.GetResolvedCountByUserFromItemScopeResolved(UserId);
-
-            if (resolvedCount <= 0)
+            if (Sql.IsItemCritical(itemId))
             {
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+                return "CRITICAL";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public string HasSubs(string itemId)
+        {
+            string output = "";
+
+            
+
+                if(Sql.ItemHasSubs(itemId))
+            {
+                int subCount = Sql.ItemSubCount(itemId);
+
+                output = subCount + " SUB";
+
+                if(subCount > 1)
+                {
+                    output += "S";
+                }
+                
             }
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 2, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return output;
+        }
+
+        public string IsActive(string itemId)
+        {
+            string output = "";
+
+            if(Sql.IsItemActive(itemId))
+            {
+                int siteCount = Sql.ItemSiteCount(itemId);
+
+                output += siteCount + " SITE";
+
+                if(siteCount > 1)
+                {
+                    output += "S";
+                }
+            }
+
+            return output;
         }
 
     }

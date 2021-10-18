@@ -1,0 +1,7 @@
+﻿Id,int,PRIMARY KEY IDENTITY,NOT NULL
+UserName,[nvarchar](50),,NOT NULL
+Password,[nvarchar](50),,NOT NULL
+AccessPermissions,[nvarchar](500),,NULL
+IsMonitored,int,,NULL
+Scope,[nvarchar](50),,NULL
+CanEditSubs,int,,NULL

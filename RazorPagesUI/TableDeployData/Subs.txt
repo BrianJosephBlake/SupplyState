@@ -1,0 +1,6 @@
+﻿Id,int,PRIMARY KEY IDENTITY,NOT NULL
+Item,[nvarchar](50),,NOT NULL
+Sub_Lawson,[nvarchar](50),,NULL
+Sub_Mfr,[nvarchar](50),,NULL
+date_added,[nvarchar](50),,NULL
+Notes,[nvarchar](1000),,NULL

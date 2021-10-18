@@ -1,0 +1,9 @@
+﻿Item,[nvarchar](50),NOT NULL,PRIMARY KEY,end
+MfrNum,[nvarchar](50),NULL,,end
+Description,[nvarchar](500),NULL,,end
+StockOutDate,[nvarchar](50),NULL,,end
+ReleaseDate,[nvarchar](500),NULL,,end
+GapDays,[nvarchar](50),NULL,,end
+ReasonCode,[nvarchar](500),NULL,,end
+StockStatus,[nvarchar](500),NULL,,end
+Source,[nvarchar](50),NULL,,end

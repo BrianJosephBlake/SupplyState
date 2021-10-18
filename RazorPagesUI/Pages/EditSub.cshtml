@@ -1,0 +1,44 @@
+﻿@page
+@model RazorPagesUI.Pages.EditSubModel
+@{
+}
+
+<form method="post" asp-page-handler="Back" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-SearchKey="@Model.SearchKey" asp-route-IsFromCriticalItemsReadout="@Model.IsFromCriticalItemsReadout">
+    <button class="btn btn-outline-secondary">BACK</button>
+</form>
+<h4 class="pb-3">Add Sub</h4>
+
+<hr class="my-4">
+
+<div class="jumbotron">
+    <form method="post" asp-page-handler="AddSub" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="1" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-SearchKey="@Model.SearchKey" asp-route-OEMitemNumber="@Model.OEMitemNumber" asp-route-IsFromCriticalItemsReadout="@Model.IsFromCriticalItemsReadout">
+        <div class="row">
+            <h6>OEM Lawson#</h6>
+        </div>
+        <div class="row">
+            <h6>@Model.OEMitemNumber</h6>
+        </div>
+        <div class="row">
+            <h6>Sub Lawson#</h6>
+        </div>
+        <div class="row">
+            <input type="text" asp-for="@Model.SubLawsonNumber" placeholder="Sub Lawson#">
+        </div>
+        <div class="row">
+            <h6>Sub Mfr#</h6>
+        </div>
+        <div class="row">
+            <input type="text" asp-for="@Model.SubMfrNumber" placeholder="Sub Mfr#">
+        </div>
+
+        <div class="row">
+
+            <label for="newNoteInput">NOTE</label>
+            <textarea class="form-control rounded-0" id="newNoteInput" rows="10" asp-for="@Model.SubNote"></textarea>
+
+        </div>
+        <div class="row">
+            <button class="btn btn-outline-secondary">Add Sub</button>
+        </div>
+    </form>
+</div>

@@ -1,4 +1,76 @@
 ﻿@page
-@model RazorPagesUI.Pages.AllNotesModel
+@model RazorPagesUI.Pages.ItemLookup_AllNotesModel
 @{
 }
+
+
+<div class="row pb-3">
+    <form method="post" asp-page-handler="Back" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-SearchKey="@Model.SearchKey">
+        <button class="btn btn-outline-secondary">
+            BACK
+        </button>
+    </form>
+</div>
+
+<h4 class="pb-3">@Model.ItemId - @Model.IC211.Description</h4>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">DATE</th>
+            <th scope="col">SITE</th>
+            <th scope="col">USER</th>
+            <th scope="col">NOTES</th>
+
+        </tr>
+    </thead>
+        <tbody>
+      
+            @{ foreach (var note in Model.NotesList)
+                {
+                    int captionLength;
+                    string caption;
+                    string userName;
+                    string dateTrimmed;
+
+                    dateTrimmed = note.DATE_CREATED.Remove(11, 8);
+                    userName = Model.GetUserName(note.UserId);
+                    captionLength = @Model.GetCaptionLength(note.NOTE);
+                    caption = note.NOTE.Substring(0, captionLength);
+
+                <form method="post" asp-page-handler="GetNote" asp-route-ItemId="@Model.ItemId" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState"  asp-route-ViewNoteId="@note.Id" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-SearchKey="@Model.SearchKey">
+                    <tr>
+                        <td>
+
+                            <button type="submit" class="btn btn-default">
+                                @dateTrimmed
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @note.Site
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @userName
+                            </button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-default">
+                                @caption...
+                            </button>
+                        </td>
+                    </tr>
+                </form>
+                    }
+                }
+
+        </tbody>
+
+</table>
+
+                      
+
+

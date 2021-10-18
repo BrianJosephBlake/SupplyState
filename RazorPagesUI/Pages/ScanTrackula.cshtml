@@ -1,0 +1,62 @@
+﻿@page
+@model RazorPagesUI.Pages.ScanTrackulaModel
+@{
+}
+
+<row>
+    <form method="post" asp-page-handler="AddScanEntry" asp-route-ScanEntry="@Model.ScanEntry" asp-route-UserId="@Model.UserId" asp-route-HasAccess="@Model.HasAccess">
+
+        <row>
+            <h6>Field 1</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldOne" />
+        </row>
+        <row>
+            <h6>Field 2</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldTwo" />
+        </row>
+        <row>
+            <h6>Field 3</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldThree" />
+        </row>
+        <row>
+            <h6>Field 4</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldFour" />
+        </row>
+        <row>
+            <h6>Field 5</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldFive" />
+        </row>
+        <row>
+            <h6>Field 6</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldSix" />
+        </row>
+        <row>
+            <h6>Field 7</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldSeven" />
+        </row>
+        <row>
+            <h6>Field 8</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldEight" />
+        </row>
+        <row>
+            <h6>Field 9</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldNine" />
+        </row>
+        <row>
+            <h6>Field 10</h6>
+            <input type="text" asp-for="@Model.ScanEntry.FieldTen" />
+        </row>
+        <hr/>
+
+        <row>
+            <button type="submit" class="btn btn-outline-secondary">SAVE</button>
+        </row>
+    </form>
+</row>
+<row>
+    <form method="post" asp-page-handler="Discard" asp-route-ScanEntry="@Model.ScanEntry" asp-route-UserId="@Model.UserId" asp-route-HasAccess="@Model.HasAccess">
+        <row>
+            <button type="submit" class="btn btn-outline-danger">DISCARD</button>
+        </row>
+    </form>
+</row>

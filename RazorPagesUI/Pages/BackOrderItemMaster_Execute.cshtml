@@ -1,4 +1,371 @@
 ﻿@page
 @model RazorPagesUI.Pages.BackOrderItemMaster_ExecuteModel
-@{
-}
+@{ }
+
+
+
+
+<form method="post" asp-page-handler="ExportProgressReport">
+    <button class="btn btn-default">Export Progress Report</button>
+</form>
+
+<form method="post" asp-page-handler="ClearBackOrderItemMaster">
+    <button class="btn btn-default">Clear BackOrderItemMaster</button>
+</form>
+
+<form method="post" asp-page-handler="ClearItemSiteResolved">
+    <button class="btn btn-default">Clear ItemSiteResolved</button>
+</form>
+
+<form method="post" asp-page-handler="ClearIC211">
+    <button class="btn btn-default">Clear IC211</button>
+</form>
+
+<form method="post" asp-page-handler="IngestBackOrderItemMaster">
+    <input type="text" asp-for="@Model.BackOrderItemMaster_Path" />
+    <button class="btn btn-default">Ingest BackOrderItemMaster</button>
+</form>
+
+<form method="post" asp-page-handler="ParseBOIM">
+    <button class="btn btn-default">Parse BOIM</button>
+</form>
+
+<form method="post" asp-page-handler="ParseUsage">
+    <button class="btn btn-default">ParseUsage</button>
+</form>
+
+<form method="post" asp-page-handler="ParseSiteScopeUsageBOIMforAllSites">
+    <button class="btn btn-default">ParseSiteScopeUsageBOIMforAllSites</button>
+</form>
+
+
+<form method="post" asp-page-handler="UpdateBOIMsMidCycle">
+    <button class="btn btn-default">UpdateBOIMsMidCycle</button>
+</form>
+
+
+
+<form method="post" asp-page-handler="AutoResolveRollingBackorders">
+    <button class="btn btn-default">AutoResolveRollingBackorders</button>
+</form>
+
+<form method="post" asp-page-handler="ParseIC211">
+    <button class="btn btn-default">Parse IC211</button>
+</form>
+
+<form method="post" asp-page-handler="ParseUsers_Locations">
+    <button class="btn btn-default">Parse Users_Locations</button>
+</form>
+
+<form method="post" asp-page-handler="IngestIC211">
+    <input type="text" asp-for="@Model.IC211Input" />
+    <button class="btn btn-default">Ingest IC211</button>
+</form>
+
+<form method="post" asp-page-handler="MatchIC211LocationToSite">
+    <button class="btn btn-default">Match IC211 Sites</button>
+</form>
+
+<form method="post" asp-page-handler="IngestNotes">
+    <input type="text" asp-for="@Model.Notes_Path" />
+    <button class="btn btn-default">Ingest Notes</button>
+</form>
+
+<form method="post" asp-page-handler="IngestLocations_Sites">
+    <input type="text" asp-for="@Model.Locations_Sites_Path" />
+    <button class="btn btn-default">Ingest Locations_Sites</button>
+</form>
+
+<form method="post" asp-page-handler="IngestLocationSite">
+    <button class="btn btn-default">Ingest Locations_Sites</button>
+</form>
+
+<form method="post" asp-page-handler="UpdateUserResolvedTables">
+    <button class="btn btn-default">UpdateScopeResolvedTables</button>
+</form>
+
+<form method="post" asp-page-handler="ParseScope_Locations">
+    <button class="btn btn-default">Parse Scope_Locations</button>
+</form>
+
+<form method="post" asp-page-handler="DropItemScopeResolvedTables">
+    <button class="btn btn-default">DropItemScopeResolvedTables</button>
+</form>
+
+
+<form method="post" asp-page-handler="ExportCarryOverByAllSites">
+    <input type="text" asp-for="@Model.CarryOverFilePath" />
+    <button class="btn btn-default">
+        Export CarryOver By All Sites
+    </button>
+</form>
+
+
+<form method="post" asp-page-handler="IngestSubs">
+    <button class="btn btn-default">Ingest Subs</button>
+</form>
+
+<form method="post" asp-page-handler="IngestUsersLocations">
+    <input type="text" asp-for="@Model.UsersLocations_Path" />
+    <button class="btn btn-default">Ingest UsersLocations</button>
+</form>
+
+<form method="post" asp-page-handler="OutputUsers">
+    <input type="text" asp-for="@Model.OutputUsersLocationsPath" />
+    <button class="btn btn-default">Output Users</button>
+</form>
+
+<form method="post" asp-page-handler="BulkIngestScope_Locations">
+    <input type="text" asp-for="@Model.Scope_LocationsPath" />
+    <button class="btn btn-default">BulkIngestScope_Locations</button>
+</form>
+
+
+<form method="post" asp-page-handler="UpdateUsers_LocationsWithSites">
+    <button class="btn btn-default">
+        UpdateUsers_LocationsWithSites
+    </button>
+</form>
+
+
+<form method="post" asp-page-handler="Duplicates">
+    <button class="btn btn-default">
+        Remove Duplicates from BackOrderItem_Staging
+    </button>
+</form>
+
+<form method="post" asp-page-handler="BulkIngestSubs">
+    <input type="text" asp-for="@Model.FilePath" />
+    <button class="btn btn-default">BulkIngestSubs</button>
+</form>
+
+<form method="post" asp-page-handler="Bulk_IngestLRQ201">
+    <input type="text" asp-for="@Model.FilePath" />
+    <button class="btn btn-default">Bulk_IngestLRQ201</button>
+</form>
+
+<form method="post" asp-page-handler="Bulk_IngestPyxisLocations">
+    <a>Site Name</a>
+    <input type="text" asp-for="@Model.PyxisSite" />
+    <a>File Path</a>
+    <input type="text" asp-for="@Model.FilePath" />
+    <button class="btn btn-default">Bulk_IngestPyxisLocations</button>
+</form>
+
+
+<form method="post" asp-page-handler="MatchResolved">
+    <button class="btn btn-default">Match Resolved</button>
+</form>
+
+<form method="post" asp-page-handler="CreateTable">
+    <a>TableName</a>
+    <input type="text" asp-for="@Model.TableName" />
+    <a>Input File Path</a>
+    <input type="text" asp-for="@Model.FilePath" />
+    <button class="btn btn-default">Create Table & Ingest CSV</button>
+</form>
+
+<form method="post" asp-page-handler="StageData">
+    <div class="row">
+        <a>File Path</a>
+        <input type="text" asp-for="@Model.FilePath" />
+    </div>
+    <div class="row">
+        <a>Item</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[0]" />
+    </div>
+    <div class="row">
+        <a>MfrNum</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[1]" />
+    </div>
+    <div class="row">
+        <a>Description</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[2]" />
+    </div>
+    <div class="row">
+        <a>Stockout Date</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[3]" />
+    </div>
+    <div class="row">
+        <a>Release Date</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[4]" />
+    </div>
+    <div class="row">
+        <a>Gap Days</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[5]" />
+    </div>
+    <div class="row">
+        <a>Reason Code</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[6]" />
+    </div>
+    <div class="row">
+        <a>Stock Status</a>
+        <input type="text" asp-for="@Model.BackOrderStagingFieldList[7]" />
+    </div>
+    <div class="row">
+        <a>Source</a>
+        <input type="text" asp-for="@Model.SourceField" />
+    </div>
+
+    <button class="btn btn-default">Import</button>
+</form>
+
+
+<form method="post" asp-page-handler="ActivateBackOrderStaging">
+    <button class="btn btn-default">Activate Backorder Staging</button>
+</form>
+
+
+<form method="post" asp-page-handler="NotesCruncher">
+    <div class="row">
+        <a>File Path</a>
+        <input type="text" asp-for="@Model.FilePath" />
+    </div>
+    <div class="row">
+        <a>Item# Field</a>
+        <input type="text" asp-for="@Model.ItemField]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[0]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[1]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[2]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[3]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[4]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[5]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[6]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[7]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[8]" />
+    </div>
+    <div class="row">
+        <a>Note Field</a>
+        <input type="text" asp-for="@Model.NotesFields[9]" />
+    </div>
+
+    <button class="btn btn-default">Import</button>
+</form>
+
+
+<form method="post" asp-page-handler="AddSub">
+    <a>Initial Lawson#</a>
+    <input type="text" asp-for="@Model.SubInitItem" />
+    <a>Sub Lawson#</a>
+    <input type="text" asp-for="@Model.SubLawsonItem" />
+    <a>Sub Mrf#</a>
+    <input type="text" asp-for="@Model.SubMfrItem" />
+    <button class="btn btn-default">Add Sub</button>
+</form>
+
+
+
+
+<form method="post" asp-page-handler="RectifyBOIMwithItemScopeResolvedTables">
+    <button class="btn btn-default">RectifyBOIMwithItemScopeResolvedTables</button>
+</form>
+
+<form method="post" asp-page-handler="SetAllBOIMToOpen">
+    <button class="btn btn-default">SetAllUnresolvedBOIMToOpen</button>
+</form>
+
+<form method="post" asp-page-handler="SetAccessPermissionsForAllSites">
+    <button class="btn btn-default">SetAccessPermissionsForAllSites</button>
+</form>
+
+<form method="post" asp-page-handler="MatchUsageSKUsToIC211Tables">
+    <button class="btn btn-default">MatchUsageSKUsToIC211Tables</button>
+</form>
+
+<form method="post" asp-page-handler="CreateItemScopeResolvedTables">
+    <button class="btn btn-default">CreateItemScopeResolvedTables</button>
+</form>
+
+<form method="post" asp-page-handler="ResolveNegativeGaps">
+    <button class="btn btn-default">ResolveNegativeGaps</button>
+</form>
+
+<form method="post" asp-page-handler="ResolveOldDstats">
+    <button class="btn btn-default">ResolveOldDstats</button>
+</form>
+
+<form method="post" asp-page-handler="CreateSubsListBySiteScope">
+    <button class="btn btn-default">CreateSubsListBySiteScope</button>
+</form>
+
+
+<form method="post" asp-page-handler="PurgeErroneousResolves">
+    <button class="btn btn-default">PurgeErroneousResolves</button>
+</form>
+
+<form method="post" asp-page-handler="ResetAndUpdateItemScopeResolved_ALL_Tables">
+    <button class="btn btn-default">ResetAndUpdateItemScopeResolved_ALL_Tables</button>
+</form>
+
+<form method="post" asp-page-handler="UsageCrunch">
+    <button class="btn btn-default">UsageCrunch</button>
+</form>
+
+
+<form method="post" asp-page-handler="AddSite">
+    <div class="row">
+        <a>Site</a>
+        <input type="text" asp-for="@Model.AddSite_Site" />
+    </div>
+    <div class="row">
+        <a>SiteName</a>
+        <input type="text" asp-for="@Model.AddSite_SiteName" />
+    </div>
+    <div class="row">
+        <a>Comapny</a>
+        <input type="text" asp-for="@Model.AddSite_Company" />
+    </div>
+    <div class="row">
+        <a>IC211 Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_IC211File" />
+    </div>
+    <div class="row">
+        <a>LocationsSiteScope Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_LocationSiteScopeFilePath" />
+    </div>
+    <div class="row">
+        <a>Usage Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_UsageFilePath" />
+    </div>
+    <div class="row">
+        <a>RQ201 Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_RQ201FilePath" />
+    </div>
+    <div class="row">
+        <a>ScopesList Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_ScopesListFilePath" />
+    </div>
+    <div class="row">
+        <a>Users_Locations Filepath</a>
+        <input type="text" asp-for="@Model.AddSite_Users_LocationsFilePath" />
+    </div>
+
+    <button class="btn btn-default">Add Site</button>
+</form>

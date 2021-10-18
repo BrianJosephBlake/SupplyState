@@ -10,7 +10,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class DashboardModel : PageModel
+    public class Dashboard_MoreModel : PageModel
     {
 
 
@@ -45,6 +45,8 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public List<string> AllSitesList { get; set; }
 
+       
+
         public void OnGet()
         {
             Console.WriteLine(DateTime.Now + " - Start Get");
@@ -73,7 +75,7 @@ namespace RazorPagesUI.Pages
 
         public int GetUserResolvedCount(int userId)
         {
-            return SQL.GetResolvedCountByUserFromSiteTable(userId);
+            return SQL.GetResolvedCountByUserFromItemScopeResolved(userId);
             Console.WriteLine(DateTime.Now + " - Get Resolved Count by User " + userId);
         }
 
@@ -98,10 +100,14 @@ namespace RazorPagesUI.Pages
 
         public int GetSiteResolvedCount(string site)
         {
-            return SQL.GetResolvedCountByUserFromSiteTable(SQL.GetMasterUserIdBySite(site));
+            return SQL.GetResolvedCountByUserFromItemScopeResolved(SQL.GetMasterUserIdBySite(site));
         }
 
-    
+        public string GetSiteName(string site)
+        {
+            return SQL.TranslateSiteToName(site);
+        }
+
     }
 
     

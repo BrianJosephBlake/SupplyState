@@ -1,0 +1,220 @@
+﻿@page
+@model RazorPagesUI.Pages.GloomhavenModel
+@{
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="container">
+            <div class="jumbotron">
+               
+                @{
+                    for (int i = 0; i < 12; i++)
+                    {
+                    
+                                
+                                        <div class="row p-2">
+                                            @{ for (int j = 0; j < 12; j++)
+                                                {
+
+                                                    int name = Model.IncrementNameIndex();
+                                                    string boardChars = Model.GetHexEntityChars(name);
+                                                    
+
+                                                                                        <div class="col-lg-1 p-2">
+                                                                                            @{
+                                                                                                if ((((i + 1) % 2 == 0) && (name % 2 == 0)) || (((i + 1) % 2 > 0) && (name % 2 > 0)))
+                                                                                                {
+                                                                                                    if (boardChars == "" && !Model.MovementMapVisible)
+                                                                                                    {
+                                                                                                        <form method="post" asp-page-handler="EmptyHexSelect" asp-route-HexSelected="@name">
+                                                                                                            <button type="submit" class="btn btn-outline-secondary"></button>
+                                                                                                        </form>
+                                                                                                    }
+                                                                                                    else if (boardChars == "" && Model.MovementMapVisible)
+                                                                                                    {
+                                                                                                        if (Model.MovementMap.Exists(x => x.Value == @name))
+                                                                                                        {
+                                                                                                            <form method="post" asp-page-handler="MoveTo" asp-route-HexSelected="@name" asp-route-EntityFocus =@Model.EntityFocus>
+                                                                                                                <button type="submit" class="btn btn-outline-success">@Model.MovementMap.Find(x => x.Value == name).RelativeDistanceToFocus</button>
+                                                                                                            </form>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <form method="post" asp-page-handler="EmptyHexSelect" asp-route-HexSelected="@name">
+                                                                                                                <button type="submit" class="btn btn-outline-secondary"></button>
+                                                                                                            </form>
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+
+                                                                                                        <div class="dropdown">
+                                                                                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                                                @boardChars
+                                                                                                            </button>
+
+                                                                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                                                                @{
+                                                                                                                    foreach (var action in Model.EntityActionTypes)
+                                                                                                                    {
+
+
+                                                                                                                        <a class="dropdown-item" asp-page-Handler="EntityActionSelect" asp-route-HexSelected="@name" asp-route-ActionTypeSelected="@action"  asp-route-MovementMapVisible="true" asp-route-EntityFocus="@name">@action</a>
+                                                                                                                    }
+
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    }
+                                                                                                }
+
+                                                                                            }
+                                                                                        </div>
+                                                }
+                                            }
+                                        </div>
+                                 
+                }
+
+                }
+            </div>
+        </div>
+        <form method="post" asp-page-handler="InitializeBoard">
+            <button class="btn btn-outline-secondary">Initialize Board</button>
+        </form>
+    </div>
+
+    
+    <div class="col-4">
+        @{ if (Model.DisplayType == 1)
+            {
+                <h4>@Model.HexSelected</h4>
+                <div class="input-group">
+                    <form method="post" asp-page-handler="AddNewEntity" asp-route-NewEntityPosition="@Model.HexSelected">
+                        <div class="row pt-5">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Entity Name</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewName" placeholder="Entity Type" aria-label="Entity Type" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Board Chars</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewBoardChar" placeholder="Entity Board Chars" aria-label="Entity Board Chars" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+
+                        
+                        <div class="row">
+
+                            <select class="custom-select" asp-for="@Model.NewEntityType">
+                                <option selected>Entity Type</option>
+                                @{
+                                    foreach (var type in Model.EntityTypes)
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                }
+
+                           </select>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Entity Max Health</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewHealth" placeholder="Entity Max Health" aria-label="Entity Max Health" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Entity Index</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewEntityIndex" placeholder="Entity Index" aria-label="Entity Type" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Is Entity Elite</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewIsElite" placeholder="Is Entity Elite" aria-label="Entity Type" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <h6 class="pr-2">Is Entity Player</h6>
+                                </div>
+                                <input type="text" asp-for="@Model.NewIsPlayer" placeholder="Is Entity Player" aria-label="Entity Type" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <button class="btn btn-outline-secondary">Add</button>
+                        </div>
+                    </form>
+
+                </div>
+            }
+            else if (Model.DisplayType == 0)
+            {
+    <table class="table table-hover">
+
+        <thead>
+            <tr>
+                <th scope="col">NAME</th>
+                <th scope="col">CLASS</th>
+                <th scope="col">HEALTH</th>
+                <th scope="col">INDEX</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @{ foreach (var entity in Model.AllEntities)
+                {
+                    <form method="post" asp-page-handler="EntitySelect">
+                                    <tr>
+                                        <td>
+
+                                            <button type="submit" class="btn btn-default">
+                                                @entity.Name
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-default">
+                                                @entity.EntityType
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-default">
+                                                @entity.Health
+                                            </button>
+                                        </td>
+
+                                        <td>
+                                            <button type="submit" class="btn btn-default">
+                                                @entity.EntityIndex
+                                            </button>
+                                        </td>
+                                    </tr>
+                    </form>
+                }
+            }
+        </tbody>
+
+    </table>
+            }
+        }
+    </div>
+   
+</div>

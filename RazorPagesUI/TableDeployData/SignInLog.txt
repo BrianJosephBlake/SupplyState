@@ -1,0 +1,3 @@
+﻿Id,int,PRIMARY KEY IDENTITY,NOT NULL
+UserId,int,,NOT NULL
+Date_Time,[nvarchar](50),,NOT NULL

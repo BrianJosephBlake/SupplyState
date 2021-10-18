@@ -1,23 +1,25 @@
 ﻿@page
-@model RazorPagesUI.Pages.DashboardModel
+@model RazorPagesUI.Pages.Dashboard_MoreModel
 @{
 }
 
-<h4>@Model.SiteName</h4>
+
 <div class="jumbotron">
     <div class="row">
 
         @{
             foreach (var site in Model.AllSitesList)
             {
+                string siteName = Model.GetSiteName(site);
+
                 int allCount = Model.GetSiteAllCount(site);
                 int resolvedCount = Model.GetSiteResolvedCount(site);
                 int openCount = allCount - resolvedCount;
 
                 <div class="col-3">
-                    <div class="card mb-4" style="width: 15rem;">
+                    <div class="card mb-4 rounded-pill" style="width: 18rem;">
                         <div class="card-body">
-                            <h5 class="card-title text-center">@site</h5>
+                            <h5 class="card-title text-center mt-4">@siteName</h5>
 
                             <button href="#" class="list-group-item list-group-item-dark list-group-item-action" type="submit">
                                 ALL

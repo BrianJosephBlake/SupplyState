@@ -1,12 +1,12 @@
 ﻿@page
-@model RazorPagesUI.Pages.ShowNoteModel
+@model RazorPagesUI.Pages.ShowNote_Item_LookupModel
 @{
 }
 
 
 
 <div class="row pb-3">
-    <form method="post" asp-page-handler="Back" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+    <form method="post" asp-page-handler="Back" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-SearchKey="@Model.SearchKey">
         <button class="btn btn-outline-secondary">
             BACK
         </button>
@@ -43,12 +43,12 @@
     <p>@Model.Note.Site</p>
 </div>
 <div class="row pt-3">
-    <form method="post" asp-page-handler="Previous" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState">
+    <form method="post" asp-page-handler="Previous" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-SearchKey="@Model.SearchKey">
         <button class="btn btn-outline-secondary">
             PREV
         </button>
     </form>
-    <form method="post" asp-page-handler="Next" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState">
+    <form method="post" asp-page-handler="Next" asp-route-ItemId="@Model.ItemId" asp-route-ViewNoteId="@Model.ViewNoteId" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-SearchKey="@Model.SearchKey">
         <button class="btn btn-outline-secondary">
             NEXT
         </button>

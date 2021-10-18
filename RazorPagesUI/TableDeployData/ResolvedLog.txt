@@ -1,0 +1,6 @@
+﻿Id,int,PRIMARY KEY IDENTITY,NOT NULL
+ITEM,[nvarchar](50),,NOT NULL
+DATE_CREATED,[nvarchar](50),,NOT NULL
+STATE,[nvarchar](500),,NOT NULL
+SITE,[nvarchar](50),,NULL
+UserId,int,,NULL

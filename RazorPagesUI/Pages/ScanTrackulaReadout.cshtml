@@ -1,0 +1,79 @@
+﻿@page
+@model RazorPagesUI.Pages.ScanTrackulaReadoutModel
+@{
+}
+
+
+<row>
+    <form method="post" asp-page-handler="AddEntry" asp-route-EntryId="@Model.EntryId" asp-route-UserId="@Model.UserId" asp-route-HasAccess="@Model.HasAccess">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">NEW SHIPMENT</button>
+    </form>
+</row>
+<hr />
+<row>
+    <form method="post" asp-page-handler="Search" asp-route-EntryId="@Model.EntryId" asp-route-UserId="@Model.UserId" asp-route-HasAccess="@Model.HasAccess">
+        <div class="row">
+            <div class="input-group mb-3">
+
+                <input type="text" asp-for="@Model.SearchString" aria-label="Search" placeholder="Search trk# or keyword" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</row>
+
+
+
+<row>
+    <h6>Date/Time: @Model.ScanEntry.Created_DateTime</h6>
+</row>
+<row>
+    <h6>User: @Model.ScanEntry.UserName</h6>
+</row>
+<row>
+    <h6>Field1: @Model.ScanEntry.FieldOne</h6>
+</row>
+<row>
+    <h6>Field2: @Model.ScanEntry.FieldTwo</h6>
+</row>
+<row>
+    <h6>Field3: @Model.ScanEntry.FieldThree</h6>
+</row>
+<row>
+    <h6>Field4: @Model.ScanEntry.FieldFour</h6>
+</row>
+<row>
+    <h6>Field5: @Model.ScanEntry.FieldFive</h6>
+</row>
+<row>
+    <h6>Field6: @Model.ScanEntry.FieldSix</h6>
+</row>
+<row>
+    <h6>Field7: @Model.ScanEntry.FieldSeven</h6>
+</row>
+<row>
+    <h6>Field8: @Model.ScanEntry.FieldEight</h6>
+</row>
+<row>
+    <h6>Field 9: @Model.ScanEntry.FieldNine</h6>
+</row>
+<row>
+    <h6>Field10: @Model.ScanEntry.FieldTen</h6>
+</row>
+
+<row>
+    <form method="post" asp-page-handler="GenerateDeliverySheet" asp-route-EntryId="@Model.EntryId" asp-route-UserId="@Model.UserId" asp-route-HasAccess="@Model.HasAccess" asp-route-ScanEntry="@Model.ScanEntry" asp-route-PdfPath="@Model.PdfPath">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Generate Delivery Sheet</button>
+    </form>
+</row>
+
+<hr />
+
+@{ if (Model.HasImage)
+    {
+        <embed src="@Model.PdfPath" allowfullscreen="true" width="800" height="1100"/>
+        <h6>@Model.ScanEntry.ImageFileName</h6>
+    }
+}

@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.Extensions.Logging;
+
 using ASP_Learning_Project.Models;
 
 namespace ASP_Learning_Project.Controllers
@@ -26,6 +28,17 @@ namespace ASP_Learning_Project.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Im_A_Button()
+        {
+
+            return View();
+        }
+
+        public IActionResult DoneBeingAButton()
+        {
+            return RedirectToPage("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

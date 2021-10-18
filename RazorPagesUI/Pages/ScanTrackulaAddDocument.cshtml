@@ -1,0 +1,14 @@
+﻿@page
+@model RazorPagesUI.Pages.ScanTrackulaAddDocumentModel
+@{
+}
+
+<form method="post" enctype="multipart/form-data" asp-page-handler="Refresh">
+
+   
+    <row>
+        <input type="file" asp-for="UploadFile" />
+        <input type="submit" />
+    </row>
+
+</form>

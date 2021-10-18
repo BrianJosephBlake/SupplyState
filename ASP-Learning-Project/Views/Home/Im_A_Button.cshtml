@@ -2,4 +2,29 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "I'm A Button!";
 }
+
+
+<form method="post">
+
+    <div class="text-center">
+        <h1 class="display-4">Well, I was a button. Now, I'm a page.</h1>
+        <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li>
+                <p>
+                    Input:
+                    @Html.TextBox("name")
+
+                </p>
+            </li>
+            <li>
+                <button asp-action="DoneBeingAButton">Go Back</button>
+            </li>
+        </ul>
+    </div>
+
+</form>

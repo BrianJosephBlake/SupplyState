@@ -1,18 +1,16 @@
 ﻿using System;
 using DataAccessLibrary;
 using DataAccessLibrary.Models;
-using RazorPagesUI.PublicLibrary;
 
-namespace RazorPagesUI.DataModels
+
+namespace DataAccessLibrary.Models
 
 {
     public class BackOrderDisplayModel
     {
-        SQLCrud Sql = new SQLCrud(ConnectionString.GetConnectionString());
+        
 
-        IC211_Model Ic211 = new IC211_Model();
-        Valuelink_Model Valuelink = new Valuelink_Model();
-        Notes_Model Notes = new Notes_Model();
+       
 
         public BackOrderDisplayModel()
         {

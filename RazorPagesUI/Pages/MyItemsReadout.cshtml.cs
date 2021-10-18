@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RazorPagesUI.DataModels;
 using RazorPagesUI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +14,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class BackorderReadoutModel : PageModel
+    public class MyItemsReadoutModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -38,6 +37,12 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public string SearchItem { get; set; }
 
+        [BindProperty (SupportsGet = true)]
+        public bool DidCalculateRunway { get; set; }
+
+        [BindProperty (SupportsGet = true)]
+        public int Runway { get; set; }
+
         [BindProperty]
         public string PrevItem { get; set; }
 
@@ -45,7 +50,10 @@ namespace RazorPagesUI.Pages
         public int DetailDisplayState { get; set; }
 
         [BindProperty (SupportsGet = true)]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
+
+        [BindProperty]
+        public string UserName { get; set; }
 
         public List<Notes_Model> NotesList { get; set; } 
 
@@ -69,176 +77,240 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public int ViewNoteId { get; set; }
 
+        [BindProperty (SupportsGet = true)]
+        public int FromMyItems { get; set; }
+
         public List<Notes_Model> DisplayNotesList { get; set; }
 
+        [BindProperty]
+        public bool UserHasItems { get; set; }
+
+        [BindProperty]
+        public List<string> AllSitesList { get; set; }
+
+        [BindProperty]
+        public bool HasNotes { get; set; }
+
+        [BindProperty (SupportsGet = true)]
+        public string MessageToUser { get; set; }
+
+        [BindProperty]
+        public int QOH { get; set; }
+
+        [BindProperty]
+        public string Scope { get; set; }
 
         SQLCrud SQL = new SQLCrud(ConnectionString.GetConnectionString());
 
 
         public void OnGet()
         {
+            AllSitesList = SQL.GetAllSites();
 
-            
+            if (HasAccess && !string.IsNullOrWhiteSpace(SQL.GetSiteByUser(UserId)))
+            { UserHasItems = true; }
+
+            string site = SQL.GetSiteByUser(UserId);
+
+            FromMyItems = 1;
+
+            UserName = SQL.GetUserNameByUserId(UserId);
+
+            Scope = SQL.GetUserScope(UserId);
+
+            SiteName = SQL.TranslateSiteToName(site);
 
             if (string.IsNullOrWhiteSpace(SiteName))
             { SiteName = "Undefined."; }
 
-           
             if (!string.IsNullOrWhiteSpace(ItemId))
             {
-
-                IC211 = SQL.Get_IC211_ByItemSite(ItemId, SQL.TranslateNameToSite(SiteName));
+                IC211 = SQL.GetIC211ByUserFromSiteTable(UserId,ItemId);
             }
             else if (!string.IsNullOrWhiteSpace(PrevItem))
             {
                 ErrorState = 1;
 
-                IC211 = SQL.Get_IC211_ByItemSite(PrevItem, SQL.TranslateNameToSite(SiteName));
+                IC211 = SQL.GetIC211ByUserFromSiteTable(UserId, PrevItem);
             }
             else
             {
+                IC211 = SQL.GetFirstIC211ByUserDisplayStateFromSiteTable(UserId, DisplayState);
 
-                IC211 = SQL.Get_First_IC211_BySiteDisplayState(SQL.TranslateNameToSite(SiteName), DisplayState);
-                ItemId = IC211.Item_Number;
+                if(!string.IsNullOrWhiteSpace(IC211.Item_Number))
+                { ItemId = IC211.Item_Number; }
+                else
+                { ItemId = "NullItem"; }
+                
             }
 
             if (!string.IsNullOrEmpty(IC211.Item_Number))
             {
-                ResolvedOrOpen = SQL.IsResolvedOrOpen(IC211.Item_Number, SQL.TranslateNameToSite(SiteName));
+                ResolvedOrOpen = SQL.IsResolvedOrOpen(IC211.Item_Number, UserId);
             }
             else
             {
                 ResolvedOrOpen = "No Record";
             }
 
-            AllCount = SQL.GetAllCountBySite(SQL.TranslateNameToSite(SiteName));
+            AllCount = SQL.GetAllCountbyUserFromSiteTable(UserId);
 
-            ResolvedCount = SQL.GetResolvedCountsBySite(SQL.TranslateNameToSite(SiteName));
+            //Console.WriteLine(DateTime.Now + " - Get All Count by User & Site");
+
+            //Console.WriteLine("Item: " + IC211.Item_Number + ", userId: " + UserId);
+
+            ResolvedCount = SQL.GetResolvedCountByUserFromItemScopeResolved(UserId);
+
+            //ResolvedCount = SQL.GetResolvedCountByUserFromSiteTable(UserId);
+            //Console.WriteLine(DateTime.Now + " - Get Resolved Count by User");
+
+            if (ResolvedCount >= AllCount)
+            {
+                ResolvedCount = AllCount;
+            }
 
             OpenCount = AllCount - ResolvedCount;
 
+
             BackOrderDisplay = new BackOrderItemMaster_Model();
 
-            BackOrderDisplay = SQL.RetrieveBackOrderItemMasterByItem(IC211.Item_Number);
+            //Console.WriteLine("Item to retrieve from BIOM: {0}", IC211.Item_Number);
+
+            BackOrderDisplay = SQL.GetBOIMByItemUserFromSiteTable(IC211.Item_Number,UserId);
+            //Console.WriteLine(DateTime.Now + " - Retrieve BOIM Record");
 
             NotesList = new List<Notes_Model>();
 
             NotesList = SQL.GetNotesByItemSite(ItemId, SQL.TranslateNameToSite(SiteName));
+            //Console.WriteLine(DateTime.Now + " - Get Notes by Item & Site");
 
             SubsList = new List<Subs_Model>();
 
             SubsList = SQL.GetSubsByItem(ItemId);
 
+            //Console.WriteLine(DateTime.Now + " - Get Subs by Item");
+
             LocationsList = new List<IC211_Model>();
 
             LocationsList = SQL.GetLocationsByItemSite(ItemId, SQL.TranslateNameToSite(SiteName));
+            //Console.WriteLine(DateTime.Now + " - Get Locations by Item");
 
             DisplayNotesList = new List<Notes_Model>();
 
             DisplayNotesList = GetDisplayNotesList(NotesList);
+            //Console.WriteLine(DateTime.Now + " - Create Display Notes List");
 
-            
+            //Console.WriteLine(DateTime.Now + " - Finish Get");
+
+            HasNotes = SQL.ItemHasNotes(ItemId);
+
+
         }
 
 
         public IActionResult OnPost()
         {
-            Console.WriteLine(BackOrderDisplay.Resolved);
+            //Console.WriteLine(BackOrderDisplay.Resolved);
 
             return RedirectToPage("/Index");
         }
 
         public IActionResult OnPostSearch()
         {
-
-            return RedirectToPage("/BackorderReadout",new { SiteName = SiteName, ItemId = SearchItem, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess } );
+            return RedirectToPage("/All_Items", new { SiteName = SiteName, SearchKey = SearchItem, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = 1, IsSmartSearch = true });
         }
 
         public IActionResult OnPostDisplayAll()
         {
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDisplayOpen()
         {
-            int allCount = SQL.GetAllCountBySite(SQL.TranslateNameToSite(SiteName));
-            int resolvedCount = SQL.GetResolvedCountsBySite(SQL.TranslateNameToSite(SiteName));
+            int allCount = SQL.GetAllCountbyUserFromSiteTable(UserId);
+            int resolvedCount = SQL.GetResolvedCountByUserFromItemScopeResolved(UserId);
 
-            if (allCount == resolvedCount)
+            if (allCount <= resolvedCount)
             {
-                return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
                 
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDisplayResolved()
         {
 
-            int resolvedCount = SQL.GetResolvedCountsBySite(SQL.TranslateNameToSite(SiteName));
+            int resolvedCount = SQL.GetResolvedCountByUserFromItemScopeResolved(UserId);
 
-            if (resolvedCount == 0)
+            if (resolvedCount <= 0)
             {
-                return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
 
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, DisplayState = 2, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 2, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostNext()
         {
             string site = SQL.TranslateNameToSite(SiteName);
+            string newItemId = "";
 
             IC211_Model newIC211 = new IC211_Model();
 
             if (DisplayState == 0)
             {
-                newIC211 = SQL.GetNext_IC211_All(ItemId, site);
+                newItemId = SQL.NextAllByUserId(UserId,ItemId);
             }
             else if (DisplayState == 1)
             {
-                newIC211 = SQL.GetNext_IC211_Open(ItemId, site);
+                newItemId = SQL.NextOpenByUserId(UserId,ItemId);
             }
             else if (DisplayState == 2)
             {
-                newIC211 = SQL.GetNext_IC211_Resolved(ItemId, site);
+                newItemId = SQL.NextResolvedByUserId(UserId, ItemId);
             }
-            
 
-            string newItemId = newIC211.Item_Number;
-
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostPrevious()
         {
             string site = SQL.TranslateNameToSite(SiteName);
+            string newItemId = "";
 
             IC211_Model newIC211 = new IC211_Model();
 
             if (DisplayState == 0)
             {
-                newIC211 = SQL.GetPrevious_IC211_All(ItemId, site);
+                newItemId = SQL.PreviousAllByUserId(UserId, ItemId);
             }
             else if (DisplayState == 1)
             {
-                newIC211 = SQL.GetPrevious_IC211_Open(ItemId, site);
+                newItemId = SQL.PreviousOpenByUserId(UserId,ItemId);
             }
             else if (DisplayState == 2)
             {
-                newIC211 = SQL.GetPrevious_IC211_Resolved(ItemId, site);
+                newItemId = SQL.PreviousResolvedByUserId(UserId, ItemId);
             }
 
-
-            string newItemId = newIC211.Item_Number;
-
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDetailChange()
         {
 
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+        }
+
+        public IActionResult OnPostCalculateRunway()
+        {
+            string site = SQL.GetSiteByUser(UserId);
+            string scope = SQL.GetUserScope(UserId);
+
+            Runway = SQL.ItemRunwayInDAys(QOH, ItemId, site, scope);
+
+            return RedirectToPage("/MyItemsReadout", new { DidCalculateRunway = true, Runway = Runway, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostAddNote()
@@ -247,37 +319,50 @@ namespace RazorPagesUI.Pages
             {
                 ITEM = ItemId,
                 NOTE = NewNote,
-                Site = SQL.TranslateNameToSite(SiteName)
+                Site = SQL.GetSiteByUser(UserId),
+                UserId = UserId
             };
 
             SQL.AddNoteByItem(addNote);
 
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostChangeResolvedState()
         {
-            SQL.ToggleResolvedState(ItemId, SQL.TranslateNameToSite(SiteName));
-
-            int allCount = SQL.GetAllCountBySite(SQL.TranslateNameToSite(SiteName));
-            int resolvedCount = SQL.GetResolvedCountsBySite(SQL.TranslateNameToSite(SiteName));
-            int openCount = allCount - resolvedCount;
-
-            if (!(SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName))) && resolvedCount == 0)
+            if (SQL.DoesResolutionNoteExistForScope(ItemId, UserId))
             {
-                DisplayState = 0;
+                SQL.OutputToLog("ToggleResolvedState for: " + ItemId + ", " + SQL.TranslateNameToSite(SiteName) + ", " + UserId);
+                SQL.ToggleResolvedState(ItemId, SQL.TranslateNameToSite(SiteName), UserId);
+
+                int allCount = SQL.GetAllCountbyUserFromSiteTable(UserId);
+                int resolvedCount = SQL.GetResolvedCountByUserFromItemScopeResolved(UserId);
+                int openCount = allCount - resolvedCount;
+
+                if (!(SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName))) && resolvedCount == 0)
+                {
+                    DisplayState = 0;
+                }
+                else if (SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName)) && openCount == 0)
+                {
+                    DisplayState = 0;
+                }
+
+                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
-            else if (SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName)) && openCount == 0)
+            else
             {
-                DisplayState = 0;
+                string message = "PLEASE ENTER A RESOLUTION NOTE";
+                return RedirectToPage("/MyItemsReadout", new { MessageToUser = message, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
 
-            return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            
         }
 
         public IActionResult OnPostAllNotes()
         {
-            return RedirectToPage("/AllNotes", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess });
+            Console.WriteLine(FromMyItems);
+            return RedirectToPage("/AllNotes", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
 
@@ -285,9 +370,21 @@ namespace RazorPagesUI.Pages
         public IActionResult OnPostGetNote()
         {
 
-            return RedirectToPage("/ShowNote", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess });
+            return RedirectToPage("/ShowNote", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = 1 });
 
         }
+
+        public IActionResult OnPostCancelNote()
+        {
+            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+        }
+
+        public IActionResult OnPostViewAllItems()
+        {
+            return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = 1 });
+        }
+
+
 
 
         public int GetCaptionLength(string Note)
@@ -325,5 +422,21 @@ namespace RazorPagesUI.Pages
 
             return DisplayNotesList;
         }
+
+        public string GetUserName(int userId)
+        {
+            return SQL.GetUserNameByUserId(userId);
+        }
+
+
+        public string GetSiteName(string site)
+        {
+            return SQL.TranslateSiteToName(site);
+        }
+
+        
+
     }
+
+    
 }

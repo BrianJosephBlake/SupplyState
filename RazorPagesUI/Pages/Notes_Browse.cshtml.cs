@@ -12,7 +12,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class Notes_HistoryModel : PageModel
+    public class Notes_BrowseModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -55,43 +55,31 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public List<string> AllSitesList { get; set; }
 
+        [BindProperty (SupportsGet = true)]
+        public string SearchKey { get; set; }
+
         SQLCrud Sql = new SQLCrud(ConnectionString.GetConnectionString());
 
         public void OnGet()
         {
-
+            AllSitesList = Sql.GetAllSites();
 
             if (HasAccess && !string.IsNullOrWhiteSpace(Sql.GetSiteByUser(UserId)))
             { UserHasItems = true; }
 
-            //Console.WriteLine(FromMyItems);
-
-            Site = Sql.TranslateNameToSite(SiteName);
-
-            AllSitesList = Sql.GetAllSites();
-
-            if (string.IsNullOrWhiteSpace(ItemId))
+            if (string.IsNullOrWhiteSpace(SearchKey))
             {
-                int siteUserId = Sql.GetMasterUserIdBySite(Site);
-                ItemId = Sql.Get_First_IC211_ByUserDisplayState(siteUserId, 0).Item_Number;
+                NotesList = Sql.GetTop100Notes();
             }
-
-            NotesList = Sql.GetNotesHistory(ItemId);
-
-       
-
-            IC211 = new IC211_Model();
-
-            IC211 = Sql.Get_IC211_ByItemSite(ItemId, Site);
-            
-              
-
-
+            else
+            {
+                NotesList = Sql.GetNotesHistory(SearchKey);
+            }
         }
 
         public IActionResult OnPostGetNote()
         {
-            return RedirectToPage("/ShowNote", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/ShowNote", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsFromBrowse = true }) ;
         }
 
         public int GetCaptionLength(string Note)
@@ -107,21 +95,11 @@ namespace RazorPagesUI.Pages
         }
 
 
-
-        public IActionResult OnPostBack()
+        public IActionResult OnPostSearch()
         {
-            Console.WriteLine(SiteName);
-
-            if (FromMyItems != 1)
-            {
-                return RedirectToPage("/BackorderReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-            }
-            else
-            {
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-            }
-                
+            return RedirectToPage("/Notes_Browse", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, ViewNoteId = ViewNoteId, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, SearchKey = SearchKey});
         }
+       
 
         public string GetUserName(int userId)
         {

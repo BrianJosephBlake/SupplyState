@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SupplyState</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3 h4"  style="background-color: #087DC4">
+            <div class="container">
+                <img src="/lib/CommonSpirit.png" class="img-fluid" style="width: 50px" alt=""/>
+                <a class="navbar-brand text-light mr-auto h2" asp-page="/BackOrderItemMaster_Execute">SupplyState</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            
+
+                @{ if (Model.HasAccess)
+                    {
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                                        <ul class="navbar-nav flex-grow-1 ml-auto">
+                                            @{ if (Model.UserHasItems)
+                                                {
+
+                                        <li class="nav-item pl-2 ml-auto">
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-light" asp-area="" asp-page="/MyItemsReadout" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">My Items</a>
+                                                <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" asp-page="/All_Items" asp-route-ItemId="@Model.ItemId" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="1">
+                                                        View All Items
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <!--
+                                                            <li class="nav-item pl-2">
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Site View
+                                                                    </button>
+                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                        @{ foreach (var site in Model.AllSitesList)
+                                                                                                {
+                                                                                                    string siteName = Model.GetSiteName(site);
+
+                                                                            <a class="dropdown-item" asp-page="/All_Site_Items" asp-route-ItemId="@Model.ItemId" asp-route-SiteName=@siteName asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="1">@siteName</a> } }
+                                                                    </div>
+                                                                </div>
+                                                            </li> -->
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <!--
+                                                            <li class="nav-item pl-2 ml-auto">
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Site View
+                                                                    </button>
+                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                        @{ foreach (var site in Model.AllSitesList)
+                                                                                                {
+                                                                                                    string siteName = Model.GetSiteName(site);
+
+                                                                            <a class="dropdown-item" asp-area="" asp-route-SiteName=@siteName asp-page="/BackorderReadout" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">@siteName</a> } }
+                                                                    </div>
+                                                                </div>
+                                                            </li> -->
+                                                                            } }
+
+                                            <li class="nav-item pl-2">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="lookupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Lookup
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="lookupDropdown">
+                                                        <a class="dropdown-item" asp-area="" asp-page="/Critical_All_Items" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">Critical Items</a>
+                                                        <a class="dropdown-item" asp-area="" asp-page="/All_Items_Item_Lookup" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">All Items</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+
+
+                                            <li class="nav-item pl-2">
+                                                <a class="btn btn-outline-light" asp-area="" asp-page="/Dashboard" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">Dashboard</a>
+                                            </li>
+
+                                            
+
+                                            <li class="nav-item pl-2">
+                                                <a class="btn btn-outline-light" asp-area="" asp-page="/Index" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">User Options</a>
+                                            </li>
+
+
+                                        </ul>
+                </div>
+                                                                            } } 
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+     
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - CHI Health - <a >About</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

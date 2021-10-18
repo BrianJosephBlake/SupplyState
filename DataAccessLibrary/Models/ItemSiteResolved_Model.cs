@@ -6,5 +6,13 @@ namespace DataAccessLibrary.Models
         public ItemSiteResolved_Model()
         {
         }
+
+        public int Id { get; set; }
+
+        public string Item { get; set; }
+
+        public string Site { get; set; }
+
+
     }
 }

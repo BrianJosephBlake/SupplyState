@@ -1,0 +1,10 @@
+﻿Id,int,IDENTITY PRIMARY KEY,NOT NULL
+Item,[nvarchar](50),,NOT NULL
+MfrNum,[nvarchar](50),,NULL
+Description,[nvarchar](500),,NULL
+StockOutDate,[nvarchar](50),,NULL
+ReleaseDate,[nvarchar](500),,NULL
+GapDays,[nvarchar](50),,NULL
+ReasonCode,[nvarchar](500),,NULL
+StockStatus,[nvarchar](500),,NULL
+Source,[nvarchar](50),,NULL

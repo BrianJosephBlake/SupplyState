@@ -12,7 +12,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class AllNotesModel : PageModel
+    public class Notes_HistoryModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -52,7 +52,8 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public bool UserHasItems { get; set; }
 
-
+        [BindProperty]
+        public List<string> AllSitesList { get; set; }
 
         SQLCrud Sql = new SQLCrud(ConnectionString.GetConnectionString());
 
@@ -67,18 +68,17 @@ namespace RazorPagesUI.Pages
 
             Site = Sql.TranslateNameToSite(SiteName);
 
+            AllSitesList = Sql.GetAllSites();
 
             if (string.IsNullOrWhiteSpace(ItemId))
             {
-                ItemId = Sql.Get_First_IC211_BySiteDisplayState(Site, 0).Item_Number;
+                int siteUserId = Sql.GetMasterUserIdBySite(Site);
+                ItemId = Sql.Get_First_IC211_ByUserDisplayState(siteUserId, 0).Item_Number;
             }
 
-            NotesList = Sql.GetNotesByItem(ItemId);
+            NotesList = Sql.GetNotesHistory(ItemId);
 
-            if (NotesList.Count > 0)
-            {
-
-            }
+       
 
             IC211 = new IC211_Model();
 
@@ -127,6 +127,11 @@ namespace RazorPagesUI.Pages
         {
             return Sql.GetUserNameByUserId(userId);
 
+        }
+
+        public string GetSiteName(string site)
+        {
+            return Sql.TranslateSiteToName(site);
         }
     }
 
