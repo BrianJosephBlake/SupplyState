@@ -189,6 +189,61 @@ namespace DataAccessLibrary
                 
             }
         }
+
+
+        public void GenerateRandomPasswordForUserId(int userId)
+        {
+            string newPassword = GeneratePassword();
+
+            string sql = "update dbo.users set [Password] = @Password where [Id] = @Id";
+
+            db.SaveData(sql, new { Password = newPassword, Id = userId }, _connectionString);
+        }
+
+        public void GenerateRandomPasswordsForAllUsers()
+        {
+            string sql = "select [Id] from dbo.users where [UserName] <> [Password]";
+
+            List<int> userIds = new List<int>();
+
+            userIds = db.LoadData<int, dynamic>(sql, new { }, _connectionString);
+
+            foreach(var userId in userIds)
+            {
+                GenerateRandomPasswordForUserId(userId);
+            }
+        }
+
+        public string GeneratePassword()
+        {
+            string newPassword = "";
+            
+            char[] newPasswordArray = new char[6];
+
+            Random randomizer = new Random();
+
+            //ascii range is 32 through 122
+
+            for (int i = 0; i < newPasswordArray.Length; i++)
+            {
+                int newRandomInt = 0;
+
+                while(newRandomInt == 0 || newRandomInt == 39 || newRandomInt == 44 || newRandomInt == 46)
+                {
+                    newRandomInt = randomizer.Next(32, 122);
+                }
+
+                newPasswordArray[i] = (char)newRandomInt;
+            }
+
+            foreach(var character in newPasswordArray)
+            {
+                newPassword += character;
+            }
+
+            return newPassword;
+        }
+
         public IC211_Model GetFirstIC211ByUserDisplayStateFromSiteTable(int userId, int displayState)
         {
             List<IC211_Model> resultsList = new List<IC211_Model>();
@@ -981,7 +1036,7 @@ namespace DataAccessLibrary
 
         }
 
-        public void IngestAndStageBackOrderData(string filePath, char delimiter, List<int> fields, string source)
+        public void IngestAndStageBackOrderData(string filePath, char delimiter, List<int> fields, string source, string region)
         {
             string sql = "";
             List<string> rows = new List<string>();
@@ -1017,7 +1072,7 @@ namespace DataAccessLibrary
 
             foreach (var set in thousandator.Sets)
             {
-                sql = "insert into dbo.[BackOrderItemMaster_Staging] ([Item],[MfrNum],[Description],[StockOutDate],[ReleaseDate],[GapDays],[ReasonCode],[StockStatus],[Source]) values ";
+                sql = "insert into dbo.[BackOrderItemMaster_Staging] ([Item],[MfrNum],[Description],[StockOutDate],[ReleaseDate],[GapDays],[ReasonCode],[StockStatus],[Source],[Region]) values ";
 
                 foreach (var row in set)
                 {
@@ -1031,13 +1086,7 @@ namespace DataAccessLibrary
                         string reasonCode;
                         string stockStatus;
 
-                        Console.WriteLine("Elements in row: " + row.Split(delimiter).Length);
-                        Console.WriteLine("Row Value: " + row);
-
                         string item = row.Split(delimiter)[fields[0] - 1];
-
-
-                        Console.WriteLine("Item Started: " + item);
 
                         if (fields[1] > 0)
                         {
@@ -1109,7 +1158,7 @@ namespace DataAccessLibrary
                             stockStatus = "";
                         }
 
-                        sql += "('" + item + "','" + mfrNum + "','" + description + "','" + stockOutDate + "','" + releaseDate + "','" + gapDays + "','" + reasonCode + "','" + stockStatus + "','" + source + "'),";
+                        sql += "('" + item + "','" + mfrNum + "','" + description + "','" + stockOutDate + "','" + releaseDate + "','" + gapDays + "','" + reasonCode + "','" + stockStatus + "','" + source + "','" + region + "'),";
                     }
                 }
 

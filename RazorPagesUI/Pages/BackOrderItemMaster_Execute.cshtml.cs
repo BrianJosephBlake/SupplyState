@@ -104,6 +104,9 @@ namespace RazorPagesUI.Pages
         [BindProperty(SupportsGet = true)]
         public string AddSite_Users_LocationsFilePath { get; set; }
 
+        [BindProperty]
+        public string RegionField { get; set; }
+
 
 
         public void OnGet()
@@ -315,7 +318,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostStageData()
         {
-            sql.IngestAndStageBackOrderData(FilePath, ',', BackOrderStagingFieldList.ToList(),SourceField);
+            sql.IngestAndStageBackOrderData(FilePath, ',', BackOrderStagingFieldList.ToList(),SourceField,RegionField);
             return RedirectToPage("/Index");
         }
 

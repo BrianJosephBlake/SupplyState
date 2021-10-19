@@ -70,8 +70,6 @@ namespace RazorPagesUI.Pages
 
             //Sql.DeployAllTables(@"D:\SupplyState\ASP-Learning-Project\ASP-Learning-Project\RazorPagesUI\TableDeployData\");
 
-
-
             IsOffLine = false;
 
             UserName = Sql.GetUserNameByUserId(UserId);
