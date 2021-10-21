@@ -198,6 +198,8 @@ namespace DataAccessLibrary
             string sql = "update dbo.users set [Password] = @Password where [Id] = @Id";
 
             db.SaveData(sql, new { Password = newPassword, Id = userId }, _connectionString);
+
+            OutputToLog("New Password for " + GetUserNameByUserId(userId) + ": " + newPassword);
         }
 
         public void GenerateRandomPasswordsForAllUsers()
@@ -228,7 +230,7 @@ namespace DataAccessLibrary
             {
                 int newRandomInt = 0;
 
-                while(newRandomInt == 0 || newRandomInt == 39 || newRandomInt == 44 || newRandomInt == 46)
+                while(newRandomInt == 0 || newRandomInt == 39 || newRandomInt == 44 || newRandomInt == 46 || newRandomInt == 40 || newRandomInt == 41 || newRandomInt == 42 || newRandomInt == 34 || newRandomInt == 47 || newRandomInt == 91 || newRandomInt == 92 || newRandomInt == 93 || newRandomInt == 58 || newRandomInt == 59 || newRandomInt == 61)
                 {
                     newRandomInt = randomizer.Next(32, 122);
                 }
@@ -244,6 +246,7 @@ namespace DataAccessLibrary
             return newPassword;
         }
 
+        
         public IC211_Model GetFirstIC211ByUserDisplayStateFromSiteTable(int userId, int displayState)
         {
             List<IC211_Model> resultsList = new List<IC211_Model>();
@@ -1414,17 +1417,17 @@ namespace DataAccessLibrary
             db.SaveData(sql, new { }, _connectionString);
         }
 
-        public void ActivateBackOrderStaging()
+        public void ActivateBackOrderStaging(string region)
         {
-            ParseStillOpen();
-            ClearBackOrderItemMaster();
+            ParseStillOpen(region);
+            ClearBackOrderItemMaster(region);
             FormatBackOrderDataByPriority();
 
             List<BackOrderItemMaster_Model> rows = new List<BackOrderItemMaster_Model>();
 
-            string sql = "insert into dbo.BackOrderItemMaster select [Item],[MfrNum],[Description],[StockOutDate],[ReleaseDate],[GapDays],[ReasonCode],[StockStatus],[Source],[Region] from dbo.BackOrderItemMaster_Staging";
+            string sql = "insert into dbo.BackOrderItemMaster select [Item],[MfrNum],[Description],[StockOutDate],[ReleaseDate],[GapDays],[ReasonCode],[StockStatus],[Source],[Region] from dbo.BackOrderItemMaster_Staging where [Region] = @Region";
 
-            db.SaveData(sql, new { }, _connectionString);
+            db.SaveData(sql, new {Region = region }, _connectionString);
 
             //ClearBackOrderItemMaster_Staging();
         }
@@ -1536,11 +1539,11 @@ namespace DataAccessLibrary
 
 
 
-        public void ClearBackOrderItemMaster()
+        public void ClearBackOrderItemMaster(string region)
         {
-            string sql = "truncate table dbo.BackOrderItemMaster";
+            string sql = "delete dbo.BackOrderItemMaster where [Region] = @Region";
 
-            db.SaveData(sql, new { }, _connectionString);
+            db.SaveData(sql, new {Region = region }, _connectionString);
 
         }
 
@@ -2636,11 +2639,25 @@ namespace DataAccessLibrary
         }
 
 
-        public void AutoResolveRollingBackorders()
+        public void AutoResolveRollingBackorders(string region)
         {
 
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
 
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
             foreach (var site in sites)
             {
                 string sql = "IF OBJECT_ID('[dbo].[ItemScopeResolved_" + site + "_ALL]','U') IS NOT NULL truncate table dbo.[ItemScopeResolved_" + site + "_ALL]";
@@ -2676,9 +2693,9 @@ namespace DataAccessLibrary
                         }
                     }
 
-                    ResolveNegativeGaps();
-                    PurgeErroneousResolves();
-                    ResetAndUpdateItemScopeResolved_ALL_Tables();
+                    ResolveNegativeGaps(region);
+                    PurgeErroneousResolves(region);
+                    ResetAndUpdateItemScopeResolved_ALL_Tables(region);
                 }
             }
         }
@@ -2723,18 +2740,31 @@ namespace DataAccessLibrary
         }
 
 
-        public void ParseBOIM()
+        public void ParseBOIM(string region)
         {
             List<string> sites = new List<string>();
 
-            sites = GetAllSites();
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach(var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if(siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
+
 
             string sql;
 
             foreach (var site in sites)
             {
-                string mbo = GetMBOBySite(site);
-                string region = GetRegionByMBO(mbo);
+                
 
 
                 sql = "IF OBJECT_ID('[dbo].[" + site + "]', 'U') IS NOT NULL DROP TABLE [dbo].[" + site + "]";
@@ -2749,7 +2779,7 @@ namespace DataAccessLibrary
 
                 Console.WriteLine("created one");
 
-                sql = "insert into dbo.[" + site + "]  select distinct boim.Item, boim.MfrNum, boim.[Description], boim.StockOutDate, boim.ReleaseDate, boim.GapDays, boim.ReasonCode, boim.StockStatus, boim.Source from dbo.BackOrderItemMaster boim inner join dbo.[IC211_" + site + "] ic on boim.Item = ic.Item_Number where boim.[Region] = @Region and ic.[Site] = @Site and order by Item";
+                sql = "insert into dbo.[" + site + "]  select distinct boim.Item, boim.MfrNum, boim.[Description], boim.StockOutDate, boim.ReleaseDate, boim.GapDays, boim.ReasonCode, boim.StockStatus, boim.Source from dbo.BackOrderItemMaster boim inner join dbo.[IC211_" + site + "] ic on boim.Item = ic.Item_Number where boim.[Region] = @Region and ic.[Site] = @Site order by Item";
 
                 db.SaveData(sql, new { Site = site, Region = region}, _connectionString);
 
@@ -2757,7 +2787,7 @@ namespace DataAccessLibrary
 
                 db.SaveData(sql, new { }, _connectionString);
 
-                CreateItemScopeResolvedTables();
+                CreateItemScopeResolvedTables(region);
 
             }
 
@@ -2854,11 +2884,24 @@ namespace DataAccessLibrary
         }
 
 
-        public void ParseStillOpen()
+        public void ParseStillOpen(string region)
         {
             List<string> sites = new List<string>();
 
-            sites = GetAllSites();
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach(var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if(siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             string sql;
 
@@ -3147,11 +3190,25 @@ namespace DataAccessLibrary
             }
         }
 
-        public void ResetAndUpdateItemScopeResolved_ALL_Tables()
+        public void ResetAndUpdateItemScopeResolved_ALL_Tables(string region)
         {
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
 
-            
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
+
             foreach (var site in sites)
             {
                 string sql = "select distinct [Item] from dbo.[" + site + "]";
@@ -3184,10 +3241,24 @@ namespace DataAccessLibrary
             }
         }
 
-        public void PurgeScopeLevelItemScopeResolvedTablesOfNonBOIMItems()
+        public void PurgeScopeLevelItemScopeResolvedTablesOfNonBOIMItems(string region)
         {
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
 
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
             sites.Remove("");
 
             foreach(var site in sites)
@@ -3221,13 +3292,13 @@ namespace DataAccessLibrary
             }
         }
 
-        public void UpdateBOIMsMidCycle()
+        public void UpdateBOIMsMidCycle(string region)
         {
-            ParseBOIM();
-            ParseSiteScopeUsageBOIMforAllSites();
-            PurgeScopeLevelItemScopeResolvedTablesOfNonBOIMItems();
-            ResetAndUpdateItemScopeResolved_ALL_Tables();
-            SetAllBOIMToOpen();
+            ParseBOIM(region);
+            ParseSiteScopeUsageBOIMforAllSites(region);
+            PurgeScopeLevelItemScopeResolvedTablesOfNonBOIMItems(region);
+            ResetAndUpdateItemScopeResolved_ALL_Tables(region);
+            SetAllBOIMToOpen(region);
         }
 
         public bool IsResolvedInEachScopesBySite(string itemId, string site)
@@ -3363,11 +3434,25 @@ namespace DataAccessLibrary
             }
         }
 
-        public void SetAllBOIMToOpen()
+        public void SetAllBOIMToOpen(string region)
         {
             List<string> sites = new List<string>();
 
-            sites = GetAllSites();
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
+
 
             foreach (var site in sites)
             {
@@ -3417,16 +3502,30 @@ namespace DataAccessLibrary
 
         }
 
-        public void ExportCarryOverByAllSites(string directoryPath)
+        public void ExportCarryOverByAllSites(string directoryPath, string region)
         {
             string row;
             string sql;
             string filePath = directoryPath;
-            List<string> sites = new List<string>();
+
             List<BackOrderItemMaster_Model> results = new List<BackOrderItemMaster_Model>();
 
-            sites = GetAllSites();
+            List<string> sites = new List<string>();
 
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             foreach (var site in sites)
             {
@@ -3471,6 +3570,7 @@ namespace DataAccessLibrary
             rows.Add(row);
 
             sites = GetAllSites();
+
             monitoredUsers = GetMonitoredUsers();
 
 
@@ -3760,12 +3860,24 @@ namespace DataAccessLibrary
             db.SaveData(sql, new { Output = output }, _connectionString);
         }
 
-        public void CreateItemScopeResolvedTables()
+        public void CreateItemScopeResolvedTables(string region)
         {
             string sql;
 
-            List<string> sites = GetAllSites();
+            List<string> allSites = GetAllSites();
 
+            List<string> sites = new List<string>();
+
+            foreach(var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if(siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             foreach (var site in sites)
             {
@@ -3933,9 +4045,24 @@ namespace DataAccessLibrary
             return results[0];
         }
 
-        public void FixNullsInUsageTables()
+        public void FixNullsInUsageTables(string region)
         {
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
+
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             foreach (var site in sites)
             {
@@ -3945,30 +4072,54 @@ namespace DataAccessLibrary
 
                 foreach (var scope in scopes)
                 {
-                    string sql = "update dbo.[Usage_" + site + "_" + scope + "] set [Usage] = '0' where [Usage] is null";
+                    string sql = "IF OBJECT_ID('[dbo].[Usage_" + site + "_" + scope + "]', 'U') IS NOT NULL update dbo.[Usage_" + site + "_" + scope + "] set [Usage] = '0' where [Usage] is null";
 
                     db.SaveData(sql, new { }, _connectionString);
                 }
             }
         }
 
-        public void ParseSiteScopeUsageBOIMforAllSites()
+        public void ParseSiteScopeUsageBOIMforAllSites(string region)
         {
 
-            FixNullsInUsageTables();
+            FixNullsInUsageTables(region);
 
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
+
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
+
+
+
 
             foreach (var site in sites)
             {
+                OutputToLog("Site: " + site);
+
                 List<string> scopes = GetAllScopesBySite(site);
                 scopes.Remove("");
 
 
                 foreach (var scope in scopes)
                 {
+                    OutputToLog("Scope: " + scope);
 
-                    string sql = "if object_id('dbo.[SiteScopeUsageBOIM_" + site + "_" + scope + "]', 'U') IS NOT NULL drop table dbo.[SiteScopeUsageBOIM_" + site + "_" + scope + "]";
+                    string sql = "IF OBJECT_ID('[dbo].[Usage_" + site + "_" + scope + "]', 'U') IS NULL create table dbo.[Usage_" + site + "_" + scope + "] ([Item] nvarchar(50) not null,[Usage] nvarchar(50))";
+                    db.SaveData(sql, new { }, _connectionString);
+
+                    sql = "if object_id('dbo.[SiteScopeUsageBOIM_" + site + "_" + scope + "]', 'U') IS NOT NULL drop table dbo.[SiteScopeUsageBOIM_" + site + "_" + scope + "]";
                     db.SaveData(sql, new { }, _connectionString);
 
                     sql = "create table [dbo].[SiteScopeUsageBOIM_" + site + "_" + scope + "] ([Id][int] primary key identity not null, [Item][nvarchar](50) not null, [Scope][nvarchar](50) not null, [Usage][int] not null)";
@@ -4371,9 +4522,24 @@ namespace DataAccessLibrary
         }
 
 
-        public void ResolveNegativeGaps()
+        public void ResolveNegativeGaps(string region)
         {
-            List<string> sites = GetAllSites();
+            List<string> sites = new List<string>();
+
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             sites.Remove("");
 
@@ -4541,11 +4707,24 @@ namespace DataAccessLibrary
 
         }
 
-        public void PurgeErroneousResolves()
+        public void PurgeErroneousResolves(string region)
         {
             List<string> sites = new List<string>();
 
-            sites = GetAllSites();
+            List<string> allSites = new List<string>();
+
+            allSites = GetAllSites();
+
+            foreach (var site in allSites)
+            {
+                string mbo = GetMBOBySite(site);
+                string siteRegion = GetRegionByMBO(mbo);
+
+                if (siteRegion == region)
+                {
+                    sites.Add(site);
+                }
+            }
 
             foreach (var site in sites)
             {

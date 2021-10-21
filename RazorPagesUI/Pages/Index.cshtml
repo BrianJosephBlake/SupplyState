@@ -1,136 +1,121 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
+@{ ViewData["Title"] = "Home page"; }
 
-@{
-    if (!Model.HasAccess && !Model.IsOffLine)
-    {
-        <div class="row pb-4">
-            @{ if (@Model.ChangePasswordState == 3)
+@{ if (!Model.HasAccess && !Model.IsOffLine)
                 {
-                    <h3>Password Succesfully Updated</h3>
-                }
-            }
-        </div>
-        <form method="post" asp-page-handler="Login" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAcess="@Model.HasAccess">
-            <div class="=row">
-                <h6>UserName</h6>
-            </div>
-            <div class="row">
-                <input asp-for="@Model.UserName" />
-            </div>
-            <div class="=row mt-4">
-                <h6>Password</h6>
-            </div>
-            <div class="row">
-                <input type="password" asp-for="@Model.Password" />
-            </div>
-            <div class="row">
-                <button type="submit" class="btn btn-outline-secondary">LOGIN</button>
-            </div>
-        </form>
-        <h4>
-        </h4>
-
-        }
-        else if (!Model.IsOffLine)
-        {
-        <div class="row pb-4">
-            <h3>User Options (@Model.UserName)</h3>
-        </div>
-                    if (Model.ChangePasswordState == 0 && Model.UserId == 19)
-                    {
-            <form method="post" asp-page-handler="SignOut" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
-                <button type="submit" class="btn btn-outline-secondary mt-4">
-                    SIGN OUT
-                </button>
-            </form>
-                    }
-                    else if (Model.ChangePasswordState == 0)
-                    {
-            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="1">
-                <button type="submit" class="btn btn-outline-secondary">
-                    CHANGE PASSWORD
-                </button>
-            </form>
-            <form method="post" asp-page-handler="SignOut" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
-                <button type="submit" class="btn btn-outline-secondary mt-4">
-                    SIGN OUT
-                </button>
-            </form>
-                    }
-                }
-
-                if (Model.ChangePasswordState == 1)
-                {
-
-
-        <div class="row">
-            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
-                <div class="row">
-                    <div class="=row">
-                        <h6 class="pr-3">Old Password:</h6>
-                        <input type="password" asp-for="@Model.Password" />
-                    </div>
-                    <div class="=row">
-                        <h6 class="pr-3">New Password:</h6>
-                        <input type="password" asp-for="@Model.newPasswordOne" />
-                    </div>
-                    <div class="=row">
-                        <h6 class="pr-3">Confirm New Password:</h6>
-                        <input type="password" asp-for="@Model.newPasswordTwo" />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-outline-secondary" asp-page-handler="ChangePassword" asp-route-UserId="@Model.UserId" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
-                    SUBMIT
-                </button>
-            </form>
-        </div>
-        <div class="row">
-            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
-                <button type="submit" class="btn btn-outline-secondary">
-                    CANCEL
-                </button>
-            </form>
-        </div>
-        }
-        else if (Model.ChangePasswordState == 4)
-        {
-            <h3>Password Change Failed</h3>
-
-            <div class="row">
-                <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
-                    <div class="row">
+    <div class="row pb-4">
+        @{ if (@Model.ChangePasswordState == 3)
+            {
+<h3>Password Succesfully Updated</h3> } }
+    </div>
+                    <form method="post" asp-page-handler="Login" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAcess="@Model.HasAccess">
                         <div class="=row">
-                            <h6 class="pr-3">Old Password:</h6>
+                            <h6>UserName</h6>
+                        </div>
+                        <div class="row">
+                            <input asp-for="@Model.UserName" />
+                        </div>
+                        <div class="=row mt-4">
+                            <h6>Password</h6>
+                        </div>
+                        <div class="row">
                             <input type="password" asp-for="@Model.Password" />
                         </div>
-                        <div class="=row">
-                            <h6 class="pr-3">New Password:</h6>
-                            <input type="password" asp-for="@Model.newPasswordOne" />
+                        <div class="row">
+                            <button type="submit" class="btn btn-outline-secondary">LOGIN</button>
                         </div>
-                        <div class="=row">
-                            <h6 class="pr-3">Confirm New Password:</h6>
-                            <input type="password" asp-for="@Model.newPasswordTwo" />
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-outline-secondary" asp-page-handler="ChangePassword" asp-route-UserId="@Model.UserId" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
-                        SUBMIT
-                    </button>
-                </form>
-            </div>
-            <div class="row">
-                <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
-                    <button type="submit" class="btn btn-outline-secondary">
-                        CANCEL
-                    </button>
-                </form>
-            </div>
+                    </form>
+                                    <h4>
+                                    </h4> }
+                                                else if (!Model.IsOffLine)
+                                                {
+                                    <div class="row pb-4">
+                                        <h3>User Options (@Model.UserName)</h3>
+                                    </div> if (Model.ChangePasswordState == 0 && Model.UserId == 19)
+                                                    {
+                                    <form method="post" asp-page-handler="SignOut" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
+                                        <button type="submit" class="btn btn-outline-secondary mt-4">
+                                            SIGN OUT
+                                        </button>
+                                    </form> }
+                                                    else if (Model.ChangePasswordState == 0)
+                                                    {
+                                    <!--
+                                    <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="1">
+                                        <button type="submit" class="btn btn-outline-secondary">
+                                            CHANGE PASSWORD
+                                        </button>
+                                    </form>
+                                                -->
+                                                        <form method="post" asp-page-handler="SignOut" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
+                                                            <button type="submit" class="btn btn-outline-secondary mt-4">
+                                                                SIGN OUT
+                                                            </button>
+                                                        </form> }
+                                                                    }
 
-                    
+                                                                    if (Model.ChangePasswordState == 1)
+                                                                    {
 
-                
-        }
-    }
+
+                                                        <div class="row">
+                                                            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
+                                                                <div class="row">
+                                                                    <div class="=row">
+                                                                        <h6 class="pr-3">Old Password:</h6>
+                                                                        <input type="password" asp-for="@Model.Password" />
+                                                                    </div>
+                                                                    <div class="=row">
+                                                                        <h6 class="pr-3">New Password:</h6>
+                                                                        <input type="password" asp-for="@Model.newPasswordOne" />
+                                                                    </div>
+                                                                    <div class="=row">
+                                                                        <h6 class="pr-3">Confirm New Password:</h6>
+                                                                        <input type="password" asp-for="@Model.newPasswordTwo" />
+                                                                    </div>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-outline-secondary" asp-page-handler="ChangePassword" asp-route-UserId="@Model.UserId" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
+                                                                    SUBMIT
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                                        <div class="row">
+                                                                            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
+                                                                                <button type="submit" class="btn btn-outline-secondary">
+                                                                                    CANCEL
+                                                                                </button>
+                                                                            </form>
+                                                                        </div> }
+                                                                                    else if (Model.ChangePasswordState == 4)
+                                                                                    {
+                                                                        <h3>Password Change Failed</h3>
+
+                                                                                        <div class="row">
+                                                                                            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
+                                                                                                <div class="row">
+                                                                                                    <div class="=row">
+                                                                                                        <h6 class="pr-3">Old Password:</h6>
+                                                                                                        <input type="password" asp-for="@Model.Password" />
+                                                                                                    </div>
+                                                                                                    <div class="=row">
+                                                                                                        <h6 class="pr-3">New Password:</h6>
+                                                                                                        <input type="password" asp-for="@Model.newPasswordOne" />
+                                                                                                    </div>
+                                                                                                    <div class="=row">
+                                                                                                        <h6 class="pr-3">Confirm New Password:</h6>
+                                                                                                        <input type="password" asp-for="@Model.newPasswordTwo" />
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <button type="submit" class="btn btn-outline-secondary" asp-page-handler="ChangePassword" asp-route-UserId="@Model.UserId" asp-route-UserName="@Model.UserName" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="2">
+                                                                                                    SUBMIT
+                                                                                                </button>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                                        <div class="row">
+                                                                                                            <form method="post" asp-page-handler="ChangePassword" asp-route-UserName="@Model.UserName" asp-route-UserId="@Model.UserId" asp-route-Password="@Model.Password" asp-route-HasAccess="@Model.HasAccess" asp-route-ChangePasswordState="0">
+                                                                                                                <button type="submit" class="btn btn-outline-secondary">
+                                                                                                                    CANCEL
+                                                                                                                </button>
+                                                                                                            </form>
+                                                                                                        </div> } }

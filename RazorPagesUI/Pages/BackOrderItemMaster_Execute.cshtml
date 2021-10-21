@@ -26,17 +26,25 @@
     <button class="btn btn-default">Ingest BackOrderItemMaster</button>
 </form>
 
+<h3>ParseBoim</h3>
 <form method="post" asp-page-handler="ParseBOIM">
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">Parse BOIM</button>
 </form>
+<h3>*******************</h3>
 
 <form method="post" asp-page-handler="ParseUsage">
     <button class="btn btn-default">ParseUsage</button>
 </form>
 
+<h3>ParseSiteScopeUsageBOIMForAllSites</h3>
 <form method="post" asp-page-handler="ParseSiteScopeUsageBOIMforAllSites">
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">ParseSiteScopeUsageBOIMforAllSites</button>
 </form>
+<h3>*****************</h3>
 
 
 <form method="post" asp-page-handler="UpdateBOIMsMidCycle">
@@ -44,10 +52,13 @@
 </form>
 
 
-
+<h3>AutoResolveRollingBackorders</h3>
 <form method="post" asp-page-handler="AutoResolveRollingBackorders">
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">AutoResolveRollingBackorders</button>
 </form>
+<h3>*****************</h3>
 
 <form method="post" asp-page-handler="ParseIC211">
     <button class="btn btn-default">Parse IC211</button>
@@ -92,13 +103,15 @@
     <button class="btn btn-default">DropItemScopeResolvedTables</button>
 </form>
 
-
+<h3>ExportCarryOverReports</h3>
 <form method="post" asp-page-handler="ExportCarryOverByAllSites">
-    <input type="text" asp-for="@Model.CarryOverFilePath" />
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">
         Export CarryOver By All Sites
     </button>
 </form>
+<h3>*****************</h3>
 
 
 <form method="post" asp-page-handler="IngestSubs">
@@ -214,10 +227,13 @@
     <button class="btn btn-default">Import</button>
 </form>
 
-
+<h3>ActivateBackorderStaging</h3>
 <form method="post" asp-page-handler="ActivateBackOrderStaging">
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">Activate Backorder Staging</button>
 </form>
+<h3>*****************</h3>
 
 
 <form method="post" asp-page-handler="NotesCruncher">
@@ -291,9 +307,13 @@
     <button class="btn btn-default">RectifyBOIMwithItemScopeResolvedTables</button>
 </form>
 
+<h3>SetUnresolvedBOIMToOpen</h3>
 <form method="post" asp-page-handler="SetAllBOIMToOpen">
+    <a>Region</a>
+    <input type="text" asp-for="@Model.RegionField" />
     <button class="btn btn-default">SetAllUnresolvedBOIMToOpen</button>
 </form>
+<h3>************************</h3>
 
 <form method="post" asp-page-handler="SetAccessPermissionsForAllSites">
     <button class="btn btn-default">SetAccessPermissionsForAllSites</button>

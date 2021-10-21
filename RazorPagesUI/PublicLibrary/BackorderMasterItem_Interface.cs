@@ -14,7 +14,7 @@ namespace RazorPagesUI.PublicLibrary
         {
             SQLCrud sql = new SQLCrud(ConnectionString.GetConnectionString());
 
-            sql.ClearBackOrderItemMaster();
+            //sql.ClearBackOrderItemMaster();
 
             //sql.UpdateValuelinkToMaster();
 

@@ -85,11 +85,12 @@ namespace RazorPagesUI.Pages
 
                 //Console.WriteLine(UserName + " " + UserId);
 
-                
 
                 Console.WriteLine(UserId);
                
             }
+
+
         }
 
         public IActionResult OnPostLogin()

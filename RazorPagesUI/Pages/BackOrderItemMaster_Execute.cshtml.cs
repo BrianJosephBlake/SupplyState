@@ -123,7 +123,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostClearBackOrderItemMaster()
         {
-            sql.ClearBackOrderItemMaster();
+            sql.ClearBackOrderItemMaster(RegionField);
 
             return RedirectToPage("/BackOrderItemMaster_Execute");
         }
@@ -193,7 +193,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostParseBOIM()
         {
-            sql.ParseBOIM();
+            sql.ParseBOIM(RegionField);
 
             return RedirectToPage("/Index");
         }
@@ -219,7 +219,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostParseCarryOver()
         {
-            sql.ParseStillOpen();
+            sql.ParseStillOpen(RegionField);
 
             return RedirectToPage("/Index");
         }
@@ -306,7 +306,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostSetAllBOIMToOpen()
         {
-            sql.SetAllBOIMToOpen();
+            sql.SetAllBOIMToOpen(RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -336,7 +336,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostActivateBackOrderStaging()
         {
-            sql.ActivateBackOrderStaging();
+            sql.ActivateBackOrderStaging(RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -348,7 +348,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostExportCarryOverByAllSites()
         {
-            sql.ExportCarryOverByAllSites(CarryOverFilePath);
+            sql.ExportCarryOverByAllSites(CarryOverFilePath, RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -390,13 +390,13 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostCreateItemScopeResolvedTables()
         {
-            sql.CreateItemScopeResolvedTables();
+            sql.CreateItemScopeResolvedTables(RegionField);
             return RedirectToPage("/Index");
         }
 
         public IActionResult OnPostAutoResolveRollingBackorders()
         {
-            sql.AutoResolveRollingBackorders();
+            sql.AutoResolveRollingBackorders(RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -410,7 +410,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostParseSiteScopeUsageBOIMforAllSites()
         {
-            sql.ParseSiteScopeUsageBOIMforAllSites();
+            sql.ParseSiteScopeUsageBOIMforAllSites(RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -422,7 +422,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostResolveNegativeGaps()
         {
-            sql.ResolveNegativeGaps();
+            sql.ResolveNegativeGaps(RegionField);
             return RedirectToPage("/Index");
         }
 
@@ -440,20 +440,20 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostPurgeErroneousResolves()
         {
-            sql.PurgeErroneousResolves();
+            sql.PurgeErroneousResolves(RegionField);
             return RedirectToPage("/Index");
         }
 
         public IActionResult OnPostResetAndUpdateItemScopeResolved_ALL_Tables()
         {
-            sql.ResetAndUpdateItemScopeResolved_ALL_Tables();
+            sql.ResetAndUpdateItemScopeResolved_ALL_Tables(RegionField);
             return RedirectToPage("/Index");
         }
 
 
         public IActionResult OnPostUpdateBOIMsMidCycle()
         {
-            sql.UpdateBOIMsMidCycle();
+            sql.UpdateBOIMsMidCycle(RegionField);
             return RedirectToPage("/Index");
         }
         
