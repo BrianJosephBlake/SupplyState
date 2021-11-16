@@ -16,15 +16,7 @@
                 List<string> scopes = new List<string>();
                 scopes = Model.GetScopesBySite(site);
 
-                if(scopes.Count > 1)
-                {
-                    scopes.Add("ALL");
-                }
-                else
-                {
-                    scopes.Clear();
-                    scopes.Add("ALL");
-                }
+               
                 
                 scopes.Sort();
 
@@ -46,14 +38,11 @@
                                         }
 
 
-                                @if (scope == "ALL")
+                                @if (scope != "ALL")
                                 {
-                                <button href="#" class="list-group-item list-group-item-dark list-group-item-action mx-auto" type="submit">
-                                    @scope
-                                    <span class="badge badge-primary badge-secondary">@completion%</span>
-                                </button> }
-                                                    else
-                                                    {
+                               
+                                           
+                                                    
                                 <button href="#" class="list-group-item list-group-item-action mx-auto" type="submit">
                                     @scope
                                     <span class="badge badge-primary badge-secondary">@completion%</span>

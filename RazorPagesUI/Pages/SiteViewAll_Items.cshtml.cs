@@ -12,7 +12,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class All_ItemsModel : PageModel
+    public class SiteViewAll_ItemsModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -75,12 +75,6 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public string Scope { get; set; }
 
-        [BindProperty]
-        public List<string> AllMBOsList { get; set; }
-
-        [BindProperty]
-        public List<string> AllRegionsList { get; set; }
-
         SQLCrud Sql = new SQLCrud(ConnectionString.GetConnectionString());
 
         public void OnGet()
@@ -98,7 +92,7 @@ namespace RazorPagesUI.Pages
 
             SiteName = Sql.TranslateSiteToName(Site);
 
-            AllRegionsList = Sql.GetAllRegions();
+            AllSitesList = Sql.GetAllSites();
 
             HasHistory = Sql.HasNotesHistory(SearchKey);
 
@@ -141,12 +135,12 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostSelectItem()
         {
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId });
         }
 
         public IActionResult OnPostSearch()
         {
-            return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
+            return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
         }
 
         public IActionResult OnPostViewNotesHistory()
@@ -161,7 +155,7 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostDisplayAll()
         {
-            return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
+            return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = SearchKey });
         }
 
         public IActionResult OnPostDisplayOpen()
@@ -171,10 +165,10 @@ namespace RazorPagesUI.Pages
 
             if (allCount <= resolvedCount)
             {
-                return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = "" });
+                return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = "" });
             }
 
-            return RedirectToPage("/All_Items", new { IsSmartSearch = false, SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems, SearchKey = "Open" }); ;
+            return RedirectToPage("/SiteViewAll_Items", new { IsSmartSearch = false, SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems, SearchKey = "Open" }); ;
         }
 
         public IActionResult OnPostDisplayResolved()
@@ -184,10 +178,10 @@ namespace RazorPagesUI.Pages
 
             if (resolvedCount <= 0)
             {
-                return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = "" });
+                return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 0, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = true, SearchKey = "" });
             }
 
-            return RedirectToPage("/All_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 2, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = false, SearchKey = "Resolved" });
+            return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, ItemId = ItemId, DisplayState = 2, DetailDisplayState = DetailDisplayState, ViewState = 1, HasAccess = HasAccess, FromMyItems = FromMyItems, UserId = UserId, IsSmartSearch = false, SearchKey = "Resolved" });
         }
 
         public string IsItemResolvedAtUserScope(string itemId)
@@ -202,16 +196,6 @@ namespace RazorPagesUI.Pages
             return isResolved;
         }
 
-
-        public List<string> GetAllMBOsByRegion(string region)
-        {
-            return Sql.GetAllMBOsByRegion(region);
-        }
-
-        public List<string> GetAllSitesByMBO(string mbo)
-        {
-            return Sql.GetAllSitesByMBO(mbo);
-        }
     }
 
 }

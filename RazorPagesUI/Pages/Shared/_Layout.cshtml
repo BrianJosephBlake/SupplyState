@@ -39,40 +39,10 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <!--
-                                                            <li class="nav-item pl-2">
-                                                                <div class="dropdown">
-                                                                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                        Site View
-                                                                    </button>
-                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                                        @{ foreach (var site in Model.AllSitesList)
-                                                                                                {
-                                                                                                    string siteName = Model.GetSiteName(site);
-
-                                                                            <a class="dropdown-item" asp-page="/All_Site_Items" asp-route-ItemId="@Model.ItemId" asp-route-SiteName=@siteName asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="0" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="1">@siteName</a> } }
-                                                                    </div>
-                                                                </div>
-                                                            </li> -->
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <!--
-                                                            <li class="nav-item pl-2 ml-auto">
-                                                                <div class="dropdown">
-                                                                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                        Site View
-                                                                    </button>
-                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                                        @{ foreach (var site in Model.AllSitesList)
-                                                                                                {
-                                                                                                    string siteName = Model.GetSiteName(site);
-
-                                                                            <a class="dropdown-item" asp-area="" asp-route-SiteName=@siteName asp-page="/BackorderReadout" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">@siteName</a> } }
-                                                                    </div>
-                                                                </div>
-                                                            </li> -->
-                                                                            } }
+                                                            }
+                                                        else
+                                                        {
+                                         } }
 
                                             <li class="nav-item pl-2">
                                                 <div class="dropdown">
@@ -92,7 +62,7 @@
                                                 <a class="btn btn-outline-light" asp-area="" asp-page="/Dashboard" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">Dashboard</a>
                                             </li>
 
-                                            
+
 
                                             <li class="nav-item pl-2">
                                                 <a class="btn btn-outline-light" asp-area="" asp-page="/Index" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId">User Options</a>

@@ -376,6 +376,12 @@ namespace RazorPagesUI.Pages
             return RedirectToPage("/Index");
         }
 
+        public IActionResult OnPostAutoResolveSnoozedItems()
+        {
+            sql.AutoResolveSnoozedItems();
+            return RedirectToPage("/Index");
+        }
+
         public IActionResult OnPostBulk_IngestPyxisLocations()
         {
             sql.Bulk_IngestPyxisLocations(FilePath, ',', PyxisSite);

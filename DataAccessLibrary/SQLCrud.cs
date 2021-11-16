@@ -562,6 +562,69 @@ namespace DataAccessLibrary
         }
 
 
+        public DateTime CalculateSnoozeDate(int snoozeWeeks = 1)
+        {
+            DateTime wednesdayThisWeek = DateTime.Today;
+
+            while (wednesdayThisWeek.DayOfWeek != DayOfWeek.Wednesday)
+            {
+                wednesdayThisWeek = wednesdayThisWeek.AddDays(-1);
+                //SQL.OutputToLog(wednesdayThisWeek.ToString());
+            }
+
+            DateTime snoozeDate = wednesdayThisWeek.AddDays(snoozeWeeks * 7);
+
+            OutputToLog(wednesdayThisWeek.ToString());
+            OutputToLog(snoozeDate.ToString() + ", " + snoozeDate.DayOfWeek.ToString());
+
+            return snoozeDate;
+        }
+
+
+        public DateTime GetSnoozeDateByItemSiteScope(string item, string site, string scope)
+        {
+            int itemInt = Int32.Parse(item);
+
+            DateTime snoozeDate = new DateTime();
+
+            snoozeDate = DateTime.Parse("1/1/2000");
+
+            string sql = "select top 1 [SnoozeTil] from dbo.[Snooze] where [Item] = @ItemInt and [Site] = @Site and [Scope] = @Scope";
+
+            List<DateTime> results = db.LoadData<DateTime, dynamic>(sql, new { ItemInt = itemInt, Site = site, Scope = scope }, _connectionString);
+
+            if(results.Count > 0)
+            {
+                snoozeDate = results[0];  
+            }
+
+            return snoozeDate;
+        }
+
+
+        public void SnoozeItembySiteScope(int userId, string item,string site, string scope,int snoozeWeeks)
+        {
+            DateTime snoozeDate = CalculateSnoozeDate(snoozeWeeks);
+
+            int itemInt = Int32.Parse(item);
+
+            string sql = "select [Id] from dbo.[Snooze] where [Item] = @ItemInt and [Site] = @Site and [Scope] = @Scope";
+
+            List<int> results = db.LoadData<int, dynamic>(sql, new { ItemInt = itemInt, Site = site, Scope = scope }, _connectionString);
+
+            foreach(var id in results)
+            {
+                sql = "delete dbo.[Snooze] where [Id] = @Id";
+
+                db.SaveData(sql, new { Id = id }, _connectionString);
+            }
+
+            sql = "insert into dbo.[Snooze] ([Item],[SnoozeTil],[UserId],[Site],[Scope]) values " +
+                "(@ItemInt, @SnoozeDate, @UserId, @Site, @Scope)";
+
+            db.SaveData(sql, new { ItemInt = itemInt, SnoozeDate = snoozeDate, UserId = userId, Scope = scope, Site = site }, _connectionString);
+
+        }
 
         public List<ItemList_Model> GetAllItemsByUserFromSiteTable(int userId)
         {
@@ -631,6 +694,8 @@ namespace DataAccessLibrary
                 return GetNullIC211();
             }
         }
+        
+
 
 
 
@@ -1202,11 +1267,11 @@ namespace DataAccessLibrary
 
             db.SaveData(sql, new { }, _connectionString);
 
-            sql = "delete from dbo.BackOrderItemMaster_Staging where Cast([StockOutDate] as datetime) < @DstatDateThreshold";
+            //sql = "delete from dbo.BackOrderItemMaster_Staging where Cast([StockOutDate] as datetime) < @DstatDateThreshold";
 
-            DateTime dstatDateThreshold = DateTime.Today.AddDays(-15);
+            //DateTime dstatDateThreshold = DateTime.Today.AddDays(-15);
 
-            db.SaveData(sql, new { DstatDateThreshold = dstatDateThreshold }, _connectionString);
+            //db.SaveData(sql, new { DstatDateThreshold = dstatDateThreshold }, _connectionString);
 
 
 
@@ -1411,6 +1476,31 @@ namespace DataAccessLibrary
         }
 
 
+        public void OopsNothingAutoResolved()
+        {
+            List<string> sites = GetAllSites();
+
+            sites.Remove("ALL");
+            sites.Remove("");
+
+            foreach(var site in sites)
+            {
+                List<string> scopes = GetAllScopesBySite(site);
+
+                scopes.Remove("");
+
+                foreach(var scope in scopes)
+                {
+                    string sql = "INSERT INTO DBO.[ItemScopeResolved_" + site + "_" + scope + "] ([ITEM]) select DISTINCT RESOLVEDLOG.ITEM from dbo.resolvedlog inner join DBO.BackOrderItemMaster ON ResolvedLog.ITEM = BackOrderItemMaster.ITEM INNER JOIN dbo.users on ResolvedLog.UserId = users.id where AccessPermissions = '" + site + "' AND SCOPE = '" + scope + "' and BackOrderItemMaster.Region = 'Midwest' and (DATE_CREATED like 'OCT 27%' OR DATE_CREATED like 'OCT 28%' OR DATE_CREATED like 'OCT 29%' OR DATE_CREATED like 'OCT 30%' OR DATE_CREATED like 'OCT 31%' OR DATE_CREATED like 'NOV  1%' OR DATE_CREATED like 'NOV  2%')";
+
+                    db.SaveData(sql, new { }, _connectionString);
+
+                    sql = "update dbo.[ItemScopeResolved_" + site + "_" + scope + "] set [Release_Date] = BOIM.[ReleaseDate] from dbo.[ItemScopeResolved_" + site + "_" + scope  + "] isr inner join dbo.BackOrderItemMaster BOIM on isr.Item = boim.Item";
+
+                    db.SaveData(sql, new { }, _connectionString);
+                }
+            }
+        }
         public void ClearBackOrderItemMaster_Staging()
         {
             string sql = "truncate table dbo.BackOrderItemMaster_Staging";
@@ -1676,7 +1766,13 @@ namespace DataAccessLibrary
 
             string sql = "select top 1 * from dbo.[" + site + "] where Item = @Item";
 
+            
+
             output = db.LoadData<BackOrderItemMaster_Model, dynamic>(sql, new { Item = item }, _connectionString).FirstOrDefault();
+
+            OutputToLog("in");
+
+            OutputToLog("select top 1 * from dbo.[" + site + "] where Item = '" + item + "'");
 
             return output;
         }
@@ -2639,6 +2735,41 @@ namespace DataAccessLibrary
         }
 
 
+        public void AutoResolveSnoozedItems()
+        {
+            List<string> sites = GetAllSites();
+
+            sites.Remove("");
+
+            foreach(var site in sites)
+            {
+                List<string> scopes = GetAllScopes();
+
+                scopes.Remove("ALL");
+
+                scopes.Remove("");
+
+                foreach(var scope in scopes)
+                {
+                    List<int> results = new List<int>();
+
+                    string sql = "select sn.[Item] from dbo.[Snooze] sn " +
+                        "inner join dbo.[" + site +"] BOIM on convert(int,BOIM.[Item]) = sn.[Item] " +
+                        "where sn.[SnoozeTil] > @Today and sn.[Site] = @Site and sn.[Scope] = @Scope";
+
+                    results = db.LoadData<int, dynamic>(sql, new { Today = DateTime.Today, Site = site, Scope = scope }, _connectionString);
+
+                    foreach(var item in results)
+                    {
+                        if(!IsItemResolvedAtSiteScope(item.ToString(),site,scope))
+                        {
+                            ToggleItemScopeResolvedState(item.ToString(), site, scope);
+                        }
+                    }
+                }
+            }
+        }
+
         public void AutoResolveRollingBackorders(string region)
         {
 
@@ -2700,6 +2831,69 @@ namespace DataAccessLibrary
             }
         }
 
+
+        public List<string> GetAllRegions()
+        {
+            List<string> allRegions = new List<string>();
+
+            string sql = "select distinct [Region] from dbo.[MBO_Region]";
+
+            allRegions = db.LoadData<string, dynamic>(sql, new { }, _connectionString);
+
+            while(allRegions.Contains(""))
+            {
+                allRegions.Remove("");
+            }
+
+            if(allRegions.Count == 0)
+            {
+                allRegions.Add("NO REGIONS FOUND");
+            }
+
+            return allRegions;    
+        }
+
+        public List<string> GetAllMBOsByRegion(string region)
+        {
+            List<string> mbos = new List<string>();
+
+            string sql = "select distinct [MBO] from dbo.[MBO_Region] where [Region] = @Region";
+
+            mbos = db.LoadData<string, dynamic>(sql, new { Region = region }, _connectionString);
+
+            while(mbos.Contains(""))
+            {
+                mbos.Remove("");
+            }
+
+            if(mbos.Count == 0)
+            {
+                mbos.Add("NO MBOS FOUND FOR REGION " + region);
+            }
+
+            return mbos;
+        }
+
+        public List<string> GetAllSitesByMBO(string mbo)
+        {
+            List<string> sites = new List<string>();
+
+            string sql = "select distinct [Site] from dbo.[Sites] where [MBO] = @MBO";
+
+            sites = db.LoadData<string, dynamic>(sql, new { MBO = mbo }, _connectionString);
+
+            while(sites.Contains(""))
+            {
+                sites.Remove("");
+            }
+
+            if(sites.Count == 0)
+            {
+                sites.Add("NO SITES FOUND FOR MBO " + mbo);
+            }
+
+            return sites;
+        }
         public int ItemRunwayInDAys(int qoh, string item, string site, string scope)
         {
             int usage = 0;
@@ -3138,6 +3332,10 @@ namespace DataAccessLibrary
                     sql = "update dbo.[" + site + "] set [Resolved] = 'Resolved' where [Item] = @ItemId";
                     db.SaveData(sql, new { ItemId = itemId }, _connectionString);
                 }
+
+                sql = "insert into dbo.[ResolvedLog] ([Item],[Date_Created],[State],[Site],[UserId]) values (@ItemId, @Today,'RESOLVED',@Site,@UserId)";
+
+                db.SaveData(sql, new { ItemId = itemId, Today = DateTime.Today, Site = site, UserId = siteId }, _connectionString);
             }
         }
 
@@ -3687,7 +3885,7 @@ namespace DataAccessLibrary
 
             List<string> results = new List<string>();
 
-            string sql = "select [Item] from dbo.Subs where [Item] = @Item";
+            string sql = "select [Item] from dbo.Subs where [Item] = @Item and [Active] = 'A'";
 
             results = db.LoadData<string, dynamic>(sql, new { Item = itemId }, _connectionString);
 
@@ -4634,11 +4832,11 @@ namespace DataAccessLibrary
 
             List<string> rows = new List<string>();
 
-            DateTime dstatDateThreshold = DateTime.Today.AddDays(-15);
+            //DateTime dstatDateThreshold = DateTime.Today.AddDays(-15);
 
-            sql = "select distinct ssub.Usage,boim.Item,boim.MfrNum,boim.Description,boim.StockOutDate,boim.ReleaseDate,boim.GapDays,boim.ReasonCode,boim.StockStatus,boim.Resolved from dbo.[" + site + "] boim inner join dbo.[IC211_" + site + "] ic on boim.item = ic.item_number inner join dbo.[Scope_Locations_" + site + "] sl on ic.location_code = sl.location left join dbo.[SiteScopeUsageBOIM_" + site + "_" + scope +"] ssub on boim.item = ssub.item where sl.scope = @Scope and Cast([StockOutDate] as datetime) > @DstatDateThreshold and boim.GapDays not like '%-%' order by ssub.usage desc";
+            sql = "select distinct ssub.Usage,boim.Item,boim.MfrNum,boim.Description,boim.StockOutDate,boim.ReleaseDate,boim.GapDays,boim.ReasonCode,boim.StockStatus,boim.Resolved from dbo.[" + site + "] boim inner join dbo.[IC211_" + site + "] ic on boim.item = ic.item_number inner join dbo.[Scope_Locations_" + site + "] sl on ic.location_code = sl.location left join dbo.[SiteScopeUsageBOIM_" + site + "_" + scope +"] ssub on boim.item = ssub.item where sl.scope = @Scope and boim.GapDays not like '%-%' order by ssub.usage desc";
 
-            items = db.LoadData<HasSubModel, dynamic>(sql, new { Scope = scope, DstatDateThreshold = dstatDateThreshold.ToString() }, _connectionString);
+            items = db.LoadData<HasSubModel, dynamic>(sql, new { Scope = scope }, _connectionString);
 
             foreach (var item in items)
             {

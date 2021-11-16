@@ -14,7 +14,7 @@ using RazorPagesUI.PublicLibrary;
 
 namespace RazorPagesUI.Pages
 {
-    public class MyItemsReadoutModel : PageModel
+    public class SiteViewReadoutModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public bool HasAccess { get; set; }
@@ -100,18 +100,6 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public string Scope { get; set; }
 
-        [BindProperty]
-        public bool SnoozeChecked { get; set; }
-
-        [BindProperty]
-        public int SnoozeWeeks { get; set; }
-
-        [BindProperty]
-        public DateTime SnoozeDate { get; set; }
-
-        [BindProperty]
-        public bool IsSnoozeSet { get; set; }
-
         SQLCrud SQL = new SQLCrud(ConnectionString.GetConnectionString());
 
 
@@ -134,8 +122,6 @@ namespace RazorPagesUI.Pages
 
             if (string.IsNullOrWhiteSpace(SiteName))
             { SiteName = "Undefined."; }
-
-            SQL.OutputToLog("ItemId: " + ItemId);
 
             if (!string.IsNullOrWhiteSpace(ItemId))
             {
@@ -167,11 +153,7 @@ namespace RazorPagesUI.Pages
                 ResolvedOrOpen = "No Record";
             }
 
-            SQL.OutputToLog("IC211.Item: " + IC211.Item_Number);
-
             AllCount = SQL.GetAllCountbyUserFromSiteTable(UserId);
-
-            SQL.OutputToLog(AllCount.ToString());
 
             //Console.WriteLine(DateTime.Now + " - Get All Count by User & Site");
 
@@ -193,10 +175,8 @@ namespace RazorPagesUI.Pages
             BackOrderDisplay = new BackOrderItemMaster_Model();
 
             //Console.WriteLine("Item to retrieve from BIOM: {0}", IC211.Item_Number);
-            SQL.OutputToLog("going in");
+
             BackOrderDisplay = SQL.GetBOIMByItemUserFromSiteTable(IC211.Item_Number,UserId);
-            SQL.OutputToLog("coming out");
-           
             //Console.WriteLine(DateTime.Now + " - Retrieve BOIM Record");
 
             NotesList = new List<Notes_Model>();
@@ -224,16 +204,6 @@ namespace RazorPagesUI.Pages
 
             HasNotes = SQL.ItemHasNotes(ItemId);
 
-            SnoozeDate = SQL.GetSnoozeDateByItemSiteScope(ItemId, SQL.TranslateNameToSite(SiteName), SQL.GetUserScope(UserId));
-
-            if(SnoozeDate < DateTime.Today)
-            {
-                IsSnoozeSet = false;
-            }
-            else
-            {
-                IsSnoozeSet = true;
-            }
 
         }
 
@@ -247,12 +217,12 @@ namespace RazorPagesUI.Pages
 
         public IActionResult OnPostSearch()
         {
-            return RedirectToPage("/All_Items", new { SiteName = SiteName, SearchKey = SearchItem, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = 1, IsSmartSearch = true });
+            return RedirectToPage("/SiteViewAll_Items", new { SiteName = SiteName, SearchKey = SearchItem, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = 1, IsSmartSearch = true });
         }
 
         public IActionResult OnPostDisplayAll()
         {
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDisplayOpen()
@@ -262,10 +232,10 @@ namespace RazorPagesUI.Pages
 
             if (allCount <= resolvedCount)
             {
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+                return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
                 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, DisplayState = 1, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDisplayResolved()
@@ -275,10 +245,10 @@ namespace RazorPagesUI.Pages
 
             if (resolvedCount <= 0)
             {
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+                return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, DisplayState = 0, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
             }
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, DisplayState = 2, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, DisplayState = 2, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostNext()
@@ -301,7 +271,7 @@ namespace RazorPagesUI.Pages
                 newItemId = SQL.NextResolvedByUserId(UserId, ItemId);
             }
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostPrevious()
@@ -324,13 +294,13 @@ namespace RazorPagesUI.Pages
                 newItemId = SQL.PreviousResolvedByUserId(UserId, ItemId);
             }
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, ItemId = newItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostDetailChange()
         {
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostCalculateRunway()
@@ -340,7 +310,7 @@ namespace RazorPagesUI.Pages
 
             Runway = SQL.ItemRunwayInDAys(QOH, ItemId, site, scope);
 
-            return RedirectToPage("/MyItemsReadout", new { DidCalculateRunway = true, Runway = Runway, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { DidCalculateRunway = true, Runway = Runway, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
         public IActionResult OnPostAddNote()
@@ -355,66 +325,9 @@ namespace RazorPagesUI.Pages
 
             SQL.AddNoteByItem(addNote);
 
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
+            return RedirectToPage("/SiteViewReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
         }
 
-        public IActionResult OnPostSaveSnooze()
-        {
-            if(SnoozeWeeks > 12)
-            {
-                SnoozeWeeks = 12;
-            }
-
-            SQL.SnoozeItembySiteScope(UserId, ItemId, SQL.TranslateNameToSite(SiteName), SQL.GetUserScope(UserId), SnoozeWeeks);
-
-            return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-        }
-
-        public IActionResult OnPostChangeResolvedState()
-        {
-
-            
-
-            if (SQL.DoesResolutionNoteExistForScope(ItemId, UserId))
-            {
-                //SQL.OutputToLog("ToggleResolvedState for: " + ItemId + ", " + SQL.TranslateNameToSite(SiteName) + ", " + UserId);
-
-               
-
-                SQL.ToggleResolvedState(ItemId, SQL.TranslateNameToSite(SiteName), UserId);
-
-                int allCount = SQL.GetAllCountbyUserFromSiteTable(UserId);
-                int resolvedCount = SQL.GetResolvedCountByUserFromItemScopeResolved(UserId);
-                int openCount = allCount - resolvedCount;
-
-                if(SnoozeChecked)
-                {
-                    SQL.OutputToLog("Snooze was checked");
-                }
-                else
-                {
-                    SQL.OutputToLog("Snooze was not checked");
-                }
-
-                if (!(SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName))) && resolvedCount == 0)
-                {
-                    DisplayState = 0;
-                }
-                else if (SQL.IsResolved(ItemId, SQL.TranslateNameToSite(SiteName)) && openCount == 0)
-                {
-                    DisplayState = 0;
-                }
-
-                return RedirectToPage("/MyItemsReadout", new { SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-            }
-            else
-            {
-                string message = "PLEASE ENTER A RESOLUTION NOTE";
-                return RedirectToPage("/MyItemsReadout", new { MessageToUser = message, SiteName = SiteName, ItemId = ItemId, DisplayState = DisplayState, DetailDisplayState = DetailDisplayState, HasAccess = HasAccess, UserId = UserId, FromMyItems = FromMyItems });
-            }
-
-            
-        }
 
         public IActionResult OnPostAllNotes()
         {

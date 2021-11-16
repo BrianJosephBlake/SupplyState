@@ -1,0 +1,137 @@
+﻿@page
+@model RazorPagesUI.Pages.SiteViewAll_ItemsModel
+@{
+}
+
+
+
+
+
+<div class="container pb-4">
+<div class="row align-items-center">
+    <div class="col-md-5 align-self-center">
+        <h4 class="pb-3">@Model.SiteName @Model.Scope (@Model.UserName)</h4>
+        <div class="row">
+            <form method="post" asp-page-handler="Search" asp-route-SiteName="@Model.SiteName" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                <div class="input-group mb-3">
+                    <input type="text" asp-for="@Model.SearchKey" aria-label="Search" placeholder="Search item# or keyword" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+     
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-3">
+
+        <div class="list-group">
+                    
+                    <form method="post" asp-page-handler="DisplayAll" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                        <button href="#" class="list-group-item list-group-item-action" type="submit">
+                            ALL
+                            <span class="badge badge-primary badge-secondary">@Model.AllCount</span>
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DisplayOpen" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                        <button href="#" class="list-group-item list-group-item-action" type="submit">
+                            OPEN
+                            <span class="badge badge-primary badge-danger">@Model.OpenCount</span>
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="DisplayResolved" asp-route-SiteName="@Model.SiteName" asp-route-ItemId="@Model.ItemId" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                        <button href="#" class="list-group-item list-group-item-action" type="submit">
+                            RESOLVED
+                            <span class="badge badge-primary badge-secondary">@Model.ResolvedCount</span>
+                        </button>
+                    </form>
+        </div>
+    </div>
+</div>
+</div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">LAWSON#</th>
+                <th scope="col">MFR#</th>
+                <th scope="col">DESCRIPTION</th>
+                <th scope="col">STOCK STATUS</th>
+                <th scope="col">RELEASE DATE</th>
+                <th scope="col">STATUS</th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @{ foreach (var item in Model.ItemList)
+                {
+                    string lawson = item.Item;
+                    string mfr = item.MfrNum;
+                    string desc = item.Description;
+                    string status = item.StockStatus;
+                    string releaseDate = item.ReleaseDate;
+                    string resolved = Model.IsItemResolvedAtUserScope(item.Item);
+
+
+
+                    <form method="post" asp-page-handler="SelectItem" asp-route-ItemId="@lawson" asp-route-DisplayState="@Model.DisplayState" asp-route-DetailDisplayState="@Model.DetailDisplayState" asp-route-SiteName="@Model.SiteName" asp-route-HasAccess="@Model.HasAccess" asp-route-UserId="@Model.UserId" asp-route-FromMyItems="@Model.FromMyItems">
+                        <tr>
+                            <td>
+
+                                <button type="submit" class="btn btn-default">
+                                    @lawson
+                                </button>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-default">
+                                    @mfr
+                                </button>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-default">
+                                    @desc
+                                </button>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-default">
+                                    @status
+                                </button>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-default">
+                                    @releaseDate
+                                </button>
+                            </td>
+                            @{ if(resolved == "Resolved")
+                                {
+                                    <td>
+                                        <button type="submit" class="btn btn-default text-success">
+                                            @resolved
+                                        </button>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <button type="submit" class="btn btn-default text-danger">
+                                            @resolved
+                                        </button>
+                                    </td>
+                                }
+                            }
+                        </tr>
+
+                    </form>
+                }
+            }
+
+        </tbody>
+
+    </table>
+
+
+
+

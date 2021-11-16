@@ -9,6 +9,7 @@ using DataAccessLibrary;
 using DataAccessLibrary.Models;
 using RazorPagesUI;
 using RazorPagesUI.PublicLibrary;
+using DataAccessLibrary.WebAPI;
 
 namespace RazorPagesUI.Pages
 {
@@ -45,6 +46,12 @@ namespace RazorPagesUI.Pages
         [BindProperty]
         public List<string> AllSitesList { get; set; }
 
+        [BindProperty]
+        public List<string> AllMBOsList { get; set; }
+
+        [BindProperty]
+        public List<string> AllRegionsList { get; set; }
+
         SQLCrud Sql = new SQLCrud(ConnectionString.GetConnectionString());
 
         [BindProperty]
@@ -58,6 +65,8 @@ namespace RazorPagesUI.Pages
 
         private readonly ILogger<IndexModel> _logger;
 
+        public ComicViewModel Comic { get; set; }
+
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
@@ -65,8 +74,19 @@ namespace RazorPagesUI.Pages
 
 
 
-        public void OnGet()
+        public async Task OnGet()
         {
+            //ComicProcessor comicProcessor = new ComicProcessor();
+
+
+            //ComicViewModel newComic = await comicProcessor.LoadComic(0);
+
+            //await LoadComic(0);
+
+            
+
+            //Sql.OutputToLog("Comic Title: " + Comic.Title);
+            //Sql.OutputToLog("Comic Day:" + Comic.Day);
 
             //Sql.DeployAllTables(@"D:\SupplyState\ASP-Learning-Project\ASP-Learning-Project\RazorPagesUI\TableDeployData\");
 
@@ -74,7 +94,9 @@ namespace RazorPagesUI.Pages
 
             UserName = Sql.GetUserNameByUserId(UserId);
 
-            AllSitesList = Sql.GetAllSites();
+            AllRegionsList = Sql.GetAllRegions();
+
+            
 
             if (HasAccess && !string.IsNullOrWhiteSpace(Sql.GetSiteByUser(UserId)))
             { UserHasItems = true; }
@@ -91,6 +113,15 @@ namespace RazorPagesUI.Pages
             }
 
 
+        }
+
+        public async Task LoadComic(int comicNumber)
+        {
+            ComicProcessor comicProcessor = new ComicProcessor();
+
+            ComicViewModel comic = await comicProcessor.LoadComic();
+
+            Comic = comic;
         }
 
         public IActionResult OnPostLogin()
@@ -147,6 +178,16 @@ namespace RazorPagesUI.Pages
         public string GetSiteName(string site)
         {
             return Sql.TranslateSiteToName(site);
+        }
+
+        public List<string> GetAllMBOsByRegion(string region)
+        {
+            return Sql.GetAllMBOsByRegion(region);
+        }
+
+        public List<string> GetAllSitesByMBO(string mbo)
+        {
+            return Sql.GetAllSitesByMBO(mbo);
         }
 
     }

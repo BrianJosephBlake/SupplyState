@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DataAccessLibrary;
 using DataAccessLibrary.Models;
+using DataAccessLibrary.WebAPI;
 using System.Data.SqlClient;
 
 namespace RazorPagesUI
@@ -41,8 +42,11 @@ namespace RazorPagesUI
 
         public static void Main(string[] args)
         {
+            ApiManager.InitializeClient();
+
 
             CreateHostBuilder(args).Build().Run();
+
 
         }
 
